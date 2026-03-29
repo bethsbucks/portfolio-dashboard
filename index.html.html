@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baseline Construction — Portfolio Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a1628;color:#e2e8f0;padding:20px;min-height:100vh}
+.wrap{max-width:1200px;margin:0 auto}
+
+/* HEADER */
+.port-hdr{background:#1F3864;border:1px solid #2E5FA3;border-radius:12px;padding:16px 20px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.port-title{font-size:18px;font-weight:600;color:#fff}
+.port-sub{font-size:11px;color:#CADCFC;margin-top:3px}
+.port-pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:600}
+.p-grn{background:#1a4d2e;color:#6ee7a0}
+.p-yel{background:#4a3200;color:#fcd34d}
+.p-red{background:#4d1a1a;color:#fca5a5}
+.p-blu{background:#0c2a4d;color:#93c5fd}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.sc{background:#111d2e;border:1px solid #1e3a5f;border-radius:8px;padding:12px 14px;text-align:center}
+.sc-lbl{font-size:10px;color:#8AADDC;text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:4px}
+.sc-val{font-size:22px;font-weight:700;color:#fff}
+.sc-sub{font-size:10px;color:#5a7da8;margin-top:2px}
+
+/* PHASE SECTIONS */
+.phase-section{margin-bottom:10px;border-radius:10px;overflow:hidden;border:1px solid #1e3a5f}
+.phase-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;user-select:none;transition:background .15s}
+.phase-header:hover{filter:brightness(1.1)}
+.phase-left{display:flex;align-items:center;gap:12px}
+.phase-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.phase-name{font-size:14px;font-weight:600;color:#fff}
+.phase-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:1px}
+.phase-right{display:flex;align-items:center;gap:10px}
+.phase-count{font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;background:rgba(255,255,255,.15);color:#fff}
+.phase-empty{font-size:11px;color:rgba(255,255,255,.4);padding:3px 10px}
+.phase-arrow{font-size:14px;color:rgba(255,255,255,.6);transition:transform .25s;display:inline-block}
+.phase-header.open .phase-arrow{transform:rotate(180deg)}
+
+/* PHASE COLORS */
+.ph1{background:#0f2a1a}
+.ph1 .phase-num{background:#16a34a;color:#fff}
+.ph2{background:#1a1f0f}
+.ph2 .phase-num{background:#65a30d;color:#fff}
+.ph3{background:#0f1e33}
+.ph3 .phase-num{background:#2563eb;color:#fff}
+.ph4{background:#1a1400}
+.ph4 .phase-num{background:#d97706;color:#fff}
+.ph5{background:#1a0a0a}
+.ph5 .phase-num{background:#dc2626;color:#fff}
+
+/* PHASE BODY */
+.phase-body{background:#0d1929;display:none;padding:14px}
+.phase-body.open{display:block}
+.phase-empty-msg{text-align:center;padding:24px;color:#3a5a7a;font-size:13px;font-style:italic}
+
+/* PROJECT CARDS */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.proj-card{background:#111d2e;border:1px solid #1e3a5f;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s}
+.proj-card:hover{border-color:#E06C00;transform:translateY(-1px)}
+.proj-card.active{border:2px solid #E06C00}
+.proj-code{font-size:10px;font-weight:700;color:#E06C00;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.proj-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:1px}
+.proj-loc{font-size:11px;color:#8AADDC;margin-bottom:10px}
+.prog-bar{background:#0a1628;border-radius:3px;height:6px;overflow:hidden;margin-bottom:5px}
+.prog-fill{height:100%;border-radius:3px}
+.bar-grn{background:#16a34a}
+.bar-blu{background:#2563eb}
+.bar-org{background:#d97706}
+.bar-gry{background:#2E5FA3;opacity:.4}
+.bar-red{background:#dc2626}
+.prog-row{display:flex;justify-content:space-between;font-size:10px;color:#8AADDC;margin-bottom:10px}
+.proj-meta{display:flex;justify-content:space-between;align-items:flex-end}
+.days-val{font-size:14px;font-weight:700;color:#fff}
+.days-lbl{font-size:10px;color:#5a7da8}
+.status-wrap{display:flex;align-items:center;gap:4px}
+.status-dot{width:7px;height:7px;border-radius:50%}
+.dot-grn{background:#16a34a}
+.dot-yel{background:#d97706}
+.dot-red{background:#dc2626}
+.dot-blu{background:#2563eb}
+.dot-gry{background:#5a7da8}
+.status-txt{font-size:10px;font-weight:600}
+.txt-grn{color:#4ade80}
+.txt-yel{color:#fbbf24}
+.txt-red{color:#f87171}
+.txt-blu{color:#93c5fd}
+.txt-gry{color:#8AADDC}
+.expand-hint{font-size:9px;color:#3a5a7a;text-align:center;margin-top:8px;padding-top:7px;border-top:1px solid #1a2f4a}
+
+/* DETAIL PANEL */
+.detail-panel{background:#111d2e;border:1px solid #2E5FA3;border-radius:10px;padding:16px;margin-top:12px;display:none}
+.detail-panel.open{display:block}
+.detail-hdr{background:#1F3864;border-radius:8px;padding:12px 16px;color:#fff;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.dh-title{font-size:14px;font-weight:600}
+.dh-sub{font-size:10px;color:#CADCFC;margin-top:2px}
+.dh-co{font-size:18px;font-weight:700;color:#E06C00}
+.dh-co-lbl{font-size:10px;color:#CADCFC}
+.close-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px}
+.close-btn:hover{background:rgba(255,255,255,.2)}
+.d3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.dc{background:#0d1929;border:1px solid #1a2f4a;border-radius:8px;padding:12px}
+.dc-title{font-size:10px;font-weight:700;color:#8AADDC;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;justify-content:space-between}
+.di{padding:6px 0;border-bottom:1px solid #1a2f4a;display:flex;justify-content:space-between;align-items:center;font-size:11px}
+.di:last-child{border-bottom:none}
+.di-name{color:#e2e8f0;font-weight:500}
+.di-sub{font-size:9px;color:#5a7da8;margin-top:1px}
+.cd-val{font-weight:700;font-size:12px}
+.ai-item{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #1a2f4a;font-size:11px}
+.ai-item:last-child{border-bottom:none}
+.ai-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.ai-txt{color:#e2e8f0;line-height:1.4}
+.ai-who{font-size:9px;color:#5a7da8;margin-top:1px}
+.bdg{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:600}
+.b-grn{background:#1a4d2e;color:#4ade80}
+.b-yel{background:#4a3200;color:#fbbf24}
+.b-red{background:#4d1a1a;color:#f87171}
+.b-blu{background:#0c2a4d;color:#93c5fd}
+.b-gry{background:#1e3a5f;color:#8AADDC}
+.ms-item{margin-bottom:8px}
+.ms-hdr{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
+.ms-name{color:#e2e8f0}
+.ms-pct{color:#8AADDC}
+.bar-bg{background:#0a1628;border-radius:3px;height:7px;overflow:hidden}
+.ms-dates{display:flex;justify-content:space-between;font-size:9px;color:#5a7da8;margin-top:2px}
+.sched-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
+
+.footer{text-align:center;font-size:10px;color:#2E5FA3;padding:12px 0 4px;margin-top:8px}
+
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.d3{grid-template-columns:1fr}.sched-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="port-hdr">
+  <div>
+    <div class="port-title">Baseline Construction — Active Portfolio</div>
+    <div class="port-sub">7 projects across 5 phases &nbsp;|&nbsp; SC &nbsp;|&nbsp; AZ &nbsp;|&nbsp; TN &nbsp;|&nbsp; Updated <span id="today"></span></div>
+  </div>
+  <div class="port-pills">
+    <span class="pill p-grn">4 on track</span>
+    <span class="pill p-yel">2 watch</span>
+    <span class="pill p-red">1 at risk</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="sc"><div class="sc-lbl">Active Projects</div><div class="sc-val">7</div><div class="sc-sub">Across 5 phases</div></div>
+  <div class="sc"><div class="sc-lbl">Total Portfolio Value</div><div class="sc-val">$14.2M</div><div class="sc-sub">Combined contracts</div></div>
+  <div class="sc"><div class="sc-lbl">In Construction</div><div class="sc-val">3</div><div class="sc-sub">Active sites</div></div>
+  <div class="sc"><div class="sc-lbl">Open Action Items</div><div class="sc-val">18</div><div class="sc-sub">4 critical</div></div>
+  <div class="sc"><div class="sc-lbl">Next CO</div><div class="sc-val" id="next-co">--d</div><div class="sc-sub">SHW-TN-012</div></div>
+</div>
+
+<!-- PHASE 1: SITE SEARCH -->
+<div class="phase-section">
+  <div class="phase-header ph1" onclick="togglePhase('ph1',this)">
+    <div class="phase-left">
+      <div class="phase-num">1</div>
+      <div>
+        <div class="phase-name">Site Search &amp; Acquisition</div>
+        <div class="phase-sub">Due diligence, LOI, land control, entitlement readiness</div>
+      </div>
+    </div>
+    <div class="phase-right">
+      <span class="phase-count">2 projects</span>
+      <span class="phase-arrow">&#9660;</span>
+    </div>
+  </div>
+  <div class="phase-body" id="ph1">
+    <div class="proj-grid">
+
+      <div class="proj-card" onclick="toggleDetail('d_acq1',this,'ph1')">
+        <div class="proj-code">TSC-SC-044</div>
+        <div class="proj-name">Tractor Supply Co.</div>
+        <div class="proj-loc">Edgefield, SC — Under LOI</div>
+        <div class="prog-bar"><div class="prog-fill bar-gry" style="width:15%"></div></div>
+        <div class="prog-row"><span>Due diligence</span><span>Phase 1 ESA ordered</span></div>
+        <div class="proj-meta">
+          <div><div class="days-val">--</div><div class="days-lbl">CO TBD</div></div>
+          <div class="status-wrap"><div class="status-dot dot-blu"></div><span class="status-txt txt-blu">Due Diligence</span></div>
+        </div>
+        <div class="expand-hint">&#9660; click to expand</div>
+      </div>
+
+      <div class="proj-card" onclick="toggleDetail('d_acq2',this,'ph1')">
+        <div class="proj-code">TSC-NC-007</div>
+        <div class="proj-name">Tractor Supply Co.</div>
+        <div class="proj-loc">Rockingham, NC — Under Contract</div>
+        <div class="prog-bar"><div class="prog-fill bar-gry" style="width:30%"></div></div>
+        <div class="prog-row"><span>Land acquisition</span><span>Close est. 05/15/2026</span></div>
+        <div class="proj-meta">
+          <div><div class="days-val" id="dv_acq2">--</div><div class="days-lbl">days to close</div></div>
+          <div class="status-wrap"><div class="status-dot dot-grn"></div><span class="status-txt txt-grn">On Track</span></div>
+        </div>
+        <div class="expand-hint">&#9660; click to expand</div>
+      </div>
+
+    </div>
+    <div class="detail-panel" id="d_acq1">
+      <div class="detail-hdr">
+        <div><div class="dh-title">TSC-SC-044 — Tractor Supply Co. | Edgefield, SC</div><div class="dh-sub">Hwy 25 &amp; I-20 Interchange &nbsp;|&nbsp; 4.2 ac &nbsp;|&nbsp; LOI executed 03/15/2026</div></div>
+        <div style="text-align:right"><div class="dh-co">TBD</div><div class="dh-co-lbl">CO target pending entitlements</div></div>
+        <button class="close-btn" onclick="toggleDetail('d_acq1',null,'ph1')">&#x2715; close</button>
+      </div>
+      <div class="d3">
+        <div class="dc">
+          <div class="dc-title">Due Diligence Status</div>
+          <div class="di"><span class="di-name">Phase 1 ESA</span><span class="bdg b-yel">Ordered</span></div>
+          <div class="di"><span class="di-name">Survey</span><span class="bdg b-gry">Not Started</span></div>
+          <div class="di"><span class="di-name">Geotech</span><span class="bdg b-gry">Not Started</span></div>
+          <div class="di"><span class="di-name">Title Commitment</span><span class="bdg b-yel">In Review</span></div>
+          <div class="di"><span class="di-name">Zoning Confirmation</span><span class="bdg b-grn">Confirmed B-2</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Key Dates</div>
+          <div class="di"><div><div class="di-name">LOI Executed</div></div><span class="cd-val">03/15/2026</span></div>
+          <div class="di"><div><div class="di-name">DD Period Expires</div></div><span class="cd-val txt-yel" id="dd_acq1">--d</span></div>
+          <div class="di"><div><div class="di-name">Target Close</div></div><span class="cd-val">06/30/2026</span></div>
+          <div class="di"><div><div class="di-name">Est. Construction Start</div></div><span class="cd-val">Q1 2027</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Action Items</div>
+          <div class="ai-item"><div class="ai-dot" style="background:#d97706"></div><div><div class="ai-txt">Phase 1 ESA — confirm delivery date with vendor</div><div class="ai-who">Owner · Due 04/10</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#d97706"></div><div><div class="ai-txt">Engage survey firm — confirm availability</div><div class="ai-who">Owner · Due 04/15</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#2563eb"></div><div><div class="ai-txt">Flood zone confirmation — FEMA FIRM panel</div><div class="ai-who">Owner · In progress</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-panel" id="d_acq2">
+      <div class="detail-hdr">
+        <div><div class="dh-title">TSC-NC-007 — Tractor Supply Co. | Rockingham, NC</div><div class="dh-sub">US-74 Corridor &nbsp;|&nbsp; 3.8 ac &nbsp;|&nbsp; Purchase contract executed</div></div>
+        <div style="text-align:right"><div class="dh-co" id="co_acq2">--d</div><div class="dh-co-lbl">to land close — 05/15/2026</div></div>
+        <button class="close-btn" onclick="toggleDetail('d_acq2',null,'ph1')">&#x2715; close</button>
+      </div>
+      <div class="d3">
+        <div class="dc">
+          <div class="dc-title">Acquisition Status</div>
+          <div class="di"><span class="di-name">Phase 1 ESA</span><span class="bdg b-grn">Clean — No RECs</span></div>
+          <div class="di"><span class="di-name">Survey</span><span class="bdg b-grn">Complete</span></div>
+          <div class="di"><span class="di-name">Title</span><span class="bdg b-grn">Clear</span></div>
+          <div class="di"><span class="di-name">Zoning</span><span class="bdg b-grn">Confirmed HC</span></div>
+          <div class="di"><span class="di-name">Flood Zone</span><span class="bdg b-grn">Zone X</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Key Dates</div>
+          <div class="di"><div><div class="di-name">Contract Executed</div></div><span class="cd-val">02/28/2026</span></div>
+          <div class="di"><div><div class="di-name">Land Close</div></div><span class="cd-val txt-yel" id="dd_acq2">--d</span></div>
+          <div class="di"><div><div class="di-name">Permit Submission Target</div></div><span class="cd-val">07/01/2026</span></div>
+          <div class="di"><div><div class="di-name">Est. Construction Start</div></div><span class="cd-val">Q4 2026</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Action Items</div>
+          <div class="ai-item"><div class="ai-dot" style="background:#16a34a"></div><div><div class="ai-txt">Lender commitment letter received</div><div class="ai-who">Owner · Done</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#d97706"></div><div><div class="ai-txt">Closing attorney engaged — schedule closing date</div><div class="ai-who">Owner · Due 04/20</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#2563eb"></div><div><div class="ai-txt">Civil engineer NTP — begin site plan design</div><div class="ai-who">Owner · Due 05/01</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 2: ENTITLEMENTS -->
+<div class="phase-section">
+  <div class="phase-header ph2" onclick="togglePhase('ph2',this)">
+    <div class="phase-left">
+      <div class="phase-num">2</div>
+      <div>
+        <div class="phase-name">Entitlements &amp; Permitting</div>
+        <div class="phase-sub">AHJ research, plan submission, permit issuance, agency coordination</div>
+      </div>
+    </div>
+    <div class="phase-right">
+      <span class="phase-count">1 project</span>
+      <span class="phase-arrow">&#9660;</span>
+    </div>
+  </div>
+  <div class="phase-body" id="ph2">
+    <div class="proj-grid">
+      <div class="proj-card" onclick="toggleDetail('d_ent1',this,'ph2')">
+        <div class="proj-code">TSC-SC-038</div>
+        <div class="proj-name">Tractor Supply Co.</div>
+        <div class="proj-loc">Sumter, SC — Permitting</div>
+        <div class="prog-bar"><div class="prog-fill bar-blu" style="width:45%"></div></div>
+        <div class="prog-row"><span>Permit review — week 6</span><span>Building permit pending</span></div>
+        <div class="proj-meta">
+          <div><div class="days-val" id="dv_ent1">--</div><div class="days-lbl">days to permit est.</div></div>
+          <div class="status-wrap"><div class="status-dot dot-yel"></div><span class="status-txt txt-yel">Watch</span></div>
+        </div>
+        <div class="expand-hint">&#9660; click to expand</div>
+      </div>
+    </div>
+    <div class="detail-panel" id="d_ent1">
+      <div class="detail-hdr">
+        <div><div class="dh-title">TSC-SC-038 — Tractor Supply Co. | Sumter, SC</div><div class="dh-sub">Broad St Extension &nbsp;|&nbsp; 19,097 SF &nbsp;|&nbsp; Civil complete, building permit under review</div></div>
+        <div style="text-align:right"><div class="dh-co" id="co_ent1">--d</div><div class="dh-co-lbl">est. permit — 05/01/2026</div></div>
+        <button class="close-btn" onclick="toggleDetail('d_ent1',null,'ph2')">&#x2715; close</button>
+      </div>
+      <div class="d3">
+        <div class="dc">
+          <div class="dc-title">Permit Status</div>
+          <div class="di"><span class="di-name">Building Permit</span><span class="bdg b-yel">Under Review — Wk 6</span></div>
+          <div class="di"><span class="di-name">SCDES NPDES NOI</span><span class="bdg b-grn">Filed — Acknowledged</span></div>
+          <div class="di"><span class="di-name">SCDOT Encroachment</span><span class="bdg b-yel">Application Submitted</span></div>
+          <div class="di"><span class="di-name">SC OSFM</span><span class="bdg b-yel">Under Review</span></div>
+          <div class="di"><span class="di-name">Utility Taps</span><span class="bdg b-gry">Not Yet Applied</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Key Dates</div>
+          <div class="di"><div><div class="di-name">Plans Submitted</div></div><span class="cd-val">03/03/2026</span></div>
+          <div class="di"><div><div class="di-name">1st Comment Letter</div></div><span class="cd-val">03/24/2026</span></div>
+          <div class="di"><div><div class="di-name">Resubmittal Due</div></div><span class="cd-val txt-yel" id="dd_ent1">--d</span></div>
+          <div class="di"><div><div class="di-name">Est. Permit Issuance</div></div><span class="cd-val">05/01/2026</span></div>
+          <div class="di"><div><div class="di-name">Target Construction Start</div></div><span class="cd-val">05/12/2026</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Action Items</div>
+          <div class="ai-item"><div class="ai-dot" style="background:#dc2626"></div><div><div class="ai-txt">Resubmittal to Sumter County — 4 comments outstanding</div><div class="ai-who">Civil EOR · Due 04/08</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#d97706"></div><div><div class="ai-txt">Follow up on SCDOT encroachment timeline</div><div class="ai-who">Owner · Due 04/10</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#2563eb"></div><div><div class="ai-txt">GC pre-qualification — start bid process</div><div class="ai-who">Owner · Due 04/15</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 3: PRECONSTRUCTION -->
+<div class="phase-section">
+  <div class="phase-header ph3" onclick="togglePhase('ph3',this)">
+    <div class="phase-left">
+      <div class="phase-num">3</div>
+      <div>
+        <div class="phase-name">Preconstruction</div>
+        <div class="phase-sub">GC selection, contract execution, schedule, submittals, mobilization prep</div>
+      </div>
+    </div>
+    <div class="phase-right">
+      <span class="phase-count">1 project</span>
+      <span class="phase-arrow">&#9660;</span>
+    </div>
+  </div>
+  <div class="phase-body" id="ph3">
+    <div class="proj-grid">
+      <div class="proj-card" onclick="toggleDetail('d_pre1',this,'ph3')">
+        <div class="proj-code">CHL-AZ-004</div>
+        <div class="proj-name">Chipotle Shell</div>
+        <div class="proj-loc">Tucson, AZ — Pre-Construction</div>
+        <div class="prog-bar"><div class="prog-fill bar-blu" style="width:60%"></div></div>
+        <div class="prog-row"><span>GC contract executed</span><span>Submittals in progress</span></div>
+        <div class="proj-meta">
+          <div><div class="days-val" id="dv_pre1">--</div><div class="days-lbl">days to mobilize</div></div>
+          <div class="status-wrap"><div class="status-dot dot-grn"></div><span class="status-txt txt-grn">On Track</span></div>
+        </div>
+        <div class="expand-hint">&#9660; click to expand</div>
+      </div>
+    </div>
+    <div class="detail-panel" id="d_pre1">
+      <div class="detail-hdr">
+        <div><div class="dh-title">CHL-AZ-004 — Chipotle Shell | Tucson, AZ</div><div class="dh-sub">Houghton Town Center &nbsp;|&nbsp; 2,325 SF &nbsp;|&nbsp; GC: DG Fenn Construction &nbsp;|&nbsp; $1.10M</div></div>
+        <div style="text-align:right"><div class="dh-co" id="co_pre1">--d</div><div class="dh-co-lbl">to shell delivery — 08/27/2026</div></div>
+        <button class="close-btn" onclick="toggleDetail('d_pre1',null,'ph3')">&#x2715; close</button>
+      </div>
+      <div class="d3">
+        <div class="dc">
+          <div class="dc-title">Preconstruction Status</div>
+          <div class="di"><span class="di-name">GC Contract</span><span class="bdg b-grn">Executed</span></div>
+          <div class="di"><span class="di-name">Bonds &amp; Insurance</span><span class="bdg b-grn">Received</span></div>
+          <div class="di"><span class="di-name">Structural Submittals</span><span class="bdg b-yel">In Review</span></div>
+          <div class="di"><span class="di-name">SWPPP / AZPDES</span><span class="bdg b-red">NOI Unconfirmed</span></div>
+          <div class="di"><span class="di-name">Mobilization</span><span class="bdg b-gry">Sched. 04/13/2026</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Key Dates</div>
+          <div class="di"><div><div class="di-name">Contract Executed</div></div><span class="cd-val">03/10/2026</span></div>
+          <div class="di"><div><div class="di-name">Structural Submittal Due</div></div><span class="cd-val txt-yel" id="dd_pre1">--d</span></div>
+          <div class="di"><div><div class="di-name">Mobilization</div></div><span class="cd-val">04/13/2026</span></div>
+          <div class="di"><div><div class="di-name">Shell Delivery</div></div><span class="cd-val">08/27/2026</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Action Items</div>
+          <div class="ai-item"><div class="ai-dot" style="background:#dc2626"></div><div><div class="ai-txt">AZPDES NOI — confirm filing with ADEQ before mobilize</div><div class="ai-who">GC · Due 04/10</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#d97706"></div><div><div class="ai-txt">Structural submittal approval outstanding</div><div class="ai-who">EOR · Due 04/20</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#2563eb"></div><div><div class="ai-txt">Pre-construction meeting — schedule with Chipotle PM</div><div class="ai-who">Owner · Due 04/08</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 4: CONSTRUCTION -->
+<div class="phase-section">
+  <div class="phase-header ph4" onclick="togglePhase('ph4',this)">
+    <div class="phase-left">
+      <div class="phase-num">4</div>
+      <div>
+        <div class="phase-name">Construction</div>
+        <div class="phase-sub">Active site work, GC coordination, inspections, schedule management</div>
+      </div>
+    </div>
+    <div class="phase-right">
+      <span class="phase-count">2 projects</span>
+      <span class="phase-arrow">&#9660;</span>
+    </div>
+  </div>
+  <div class="phase-body" id="ph4">
+    <div class="proj-grid">
+
+      <div class="proj-card" onclick="toggleDetail('d_con1',this,'ph4')">
+        <div class="proj-code">TSC-SC-031</div>
+        <div class="proj-name">Tractor Supply Co.</div>
+        <div class="proj-loc">Greenwood, SC</div>
+        <div class="prog-bar"><div class="prog-fill bar-org" style="width:34%"></div></div>
+        <div class="prog-row"><span>34% complete</span><span>Day 41 of 119</span></div>
+        <div class="proj-meta">
+          <div><div class="days-val" id="dv_con1">--</div><div class="days-lbl">days to CO</div></div>
+          <div class="status-wrap"><div class="status-dot dot-yel"></div><span class="status-txt txt-yel">Watch</span></div>
+        </div>
+        <div class="expand-hint">&#9660; click to expand</div>
+      </div>
+
+      <div class="proj-card" onclick="toggleDetail('d_con2',this,'ph4')">
+        <div class="proj-code">TSC-SC-028</div>
+        <div class="proj-name">Tractor Supply Co.</div>
+        <div class="proj-loc">Abbeville, SC</div>
+        <div class="prog-bar"><div class="prog-fill bar-grn" style="width:71%"></div></div>
+        <div class="prog-row"><span>71% complete</span><span>Day 85 of 119</span></div>
+        <div class="proj-meta">
+          <div><div class="days-val" id="dv_con2">--</div><div class="days-lbl">days to CO</div></div>
+          <div class="status-wrap"><div class="status-dot dot-grn"></div><span class="status-txt txt-grn">On Track</span></div>
+        </div>
+        <div class="expand-hint">&#9660; click to expand</div>
+      </div>
+
+    </div>
+
+    <div class="detail-panel" id="d_con1">
+      <div class="detail-hdr">
+        <div><div class="dh-title">TSC-SC-031 — Tractor Supply Co. | Greenwood, SC</div><div class="dh-sub">1485 Bypass 72 NE &nbsp;|&nbsp; 19,097 SF &nbsp;|&nbsp; GC: Blackstone Commercial Builders &nbsp;|&nbsp; $2.41M</div></div>
+        <div style="text-align:right"><div class="dh-co" id="co_con1">--d</div><div class="dh-co-lbl">to CO — 08/15/2026</div></div>
+        <button class="close-btn" onclick="toggleDetail('d_con1',null,'ph4')">&#x2715; close</button>
+      </div>
+      <div class="d3">
+        <div class="dc">
+          <div class="dc-title">Critical Dates <span class="bdg b-red">2 urgent</span></div>
+          <div class="di"><div><div class="di-name">SCDES NOI Renewal</div><div class="di-sub">04/05/2026 — FILE NOW</div></div><span class="cd-val txt-red" id="c1_con1">--</span></div>
+          <div class="di"><div><div class="di-name">SCDOT Encroachment</div><div class="di-sub">05/01/2026</div></div><span class="cd-val" style="color:#fbbf24" id="c2_con1">--</span></div>
+          <div class="di"><div><div class="di-name">TSC Delivery</div><div class="di-sub">08/01/2026</div></div><span class="cd-val" id="c3_con1">--</span></div>
+          <div class="di"><div><div class="di-name">CO Target</div><div class="di-sub">08/15/2026</div></div><span class="cd-val" id="c4_con1">--</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Action Items <span class="bdg b-red">7 open</span></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#dc2626"></div><div><div class="ai-txt">SCDES NOI renewal — expires &lt;10 days</div><div class="ai-who">Owner · Due 04/03</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#dc2626"></div><div><div class="ai-txt">Steel shop drawings resubmittal overdue</div><div class="ai-who">GC · 3 days overdue</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#d97706"></div><div><div class="ai-txt">Confirm SCDOT median cut approval</div><div class="ai-who">Owner · Due 04/10</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#d97706"></div><div><div class="ai-txt">TSC lease amendment — Exhibit B</div><div class="ai-who">Owner · Due 04/15</div></div></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Permit Status</div>
+          <div class="di"><span class="di-name">Building Permit</span><span class="bdg b-grn">Issued</span></div>
+          <div class="di"><span class="di-name">SCDOT Encroachment</span><span class="bdg b-grn">Issued</span></div>
+          <div class="di"><span class="di-name">SCDES NPDES/CGP</span><span class="bdg b-red">Renew Now</span></div>
+          <div class="di"><span class="di-name">SC OSFM</span><span class="bdg b-yel">In Review</span></div>
+          <div class="di"><span class="di-name">Electrical</span><span class="bdg b-grn">Issued</span></div>
+        </div>
+      </div>
+      <div class="dc" style="margin-top:10px">
+        <div class="dc-title">Schedule</div>
+        <div class="sched-grid">
+          <div>
+            <div class="ms-item"><div class="ms-hdr"><span class="ms-name">Site work &amp; earthwork</span><span class="ms-pct">100%</span></div><div class="bar-bg"><div class="prog-fill bar-grn" style="width:100%"></div></div><div class="ms-dates"><span>02/16</span><span class="bdg b-grn" style="font-size:8px">Complete</span><span>03/10</span></div></div>
+            <div class="ms-item"><div class="ms-hdr"><span class="ms-name">Foundation &amp; slab</span><span class="ms-pct">85%</span></div><div class="bar-bg"><div class="prog-fill bar-org" style="width:85%"></div></div><div class="ms-dates"><span>03/18</span><span class="bdg b-yel" style="font-size:8px">In Progress</span><span>04/08</span></div></div>
+          </div>
+          <div>
+            <div class="ms-item"><div class="ms-hdr"><span class="ms-name">Structural steel</span><span class="ms-pct">20%</span></div><div class="bar-bg"><div class="prog-fill bar-org" style="width:20%"></div></div><div class="ms-dates"><span>04/01</span><span class="bdg b-yel" style="font-size:8px">In Progress</span><span>05/01</span></div></div>
+            <div class="ms-item"><div class="ms-hdr"><span class="ms-name">MEP &amp; finishes</span><span class="ms-pct">0%</span></div><div class="bar-bg"><div class="prog-fill bar-gry" style="width:1%"></div></div><div class="ms-dates"><span>05/15</span><span class="bdg b-gry" style="font-size:8px">Not Started</span><span>07/25</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-panel" id="d_con2">
+      <div class="detail-hdr">
+        <div><div class="dh-title">TSC-SC-028 — Tractor Supply Co. | Abbeville, SC</div><div class="dh-sub">3210 Hwy 72 Bypass &nbsp;|&nbsp; 19,097 SF &nbsp;|&nbsp; GC: Meridian Contractors &nbsp;|&nbsp; $2.18M</div></div>
+        <div style="text-align:right"><div class="dh-co" id="co_con2">--d</div><div class="dh-co-lbl">to CO — 05/30/2026</div></div>
+        <button class="close-btn" onclick="toggleDetail('d_con2',null,'ph4')">&#x2715; close</button>
+      </div>
+      <div class="d3">
+        <div class="dc">
+          <div class="dc-title">Critical Dates <span class="bdg b-yel">1 watch</span></div>
+          <div class="di"><div><div class="di-name">Final inspections</div><div class="di-sub">05/15/2026</div></div><span class="cd-val" style="color:#fbbf24" id="c1_con2">--</span></div>
+          <div class="di"><div><div class="di-name">TSC punch walk</div><div class="di-sub">05/20/2026</div></div><span class="cd-val" id="c2_con2">--</span></div>
+          <div class="di"><div><div class="di-name">CO Target</div><div class="di-sub">05/30/2026</div></div><span class="cd-val" id="c3_con2">--</span></div>
+          <div class="di"><div><div class="di-name">Rent Commencement</div><div class="di-sub">06/01/2026</div></div><span class="cd-val" id="c4_con2">--</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Action Items <span class="bdg b-yel">4 open</span></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#d97706"></div><div><div class="ai-txt">TSC FF&amp;E delivery window — confirm access dates</div><div class="ai-who">PM · Due 04/20</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#d97706"></div><div><div class="ai-txt">Final grading and seeding — weather hold</div><div class="ai-who">GC · Due 04/25</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#2563eb"></div><div><div class="ai-txt">Lien waiver collection — 3 subs outstanding</div><div class="ai-who">GC · Due 05/01</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#16a34a"></div><div><div class="ai-txt">Meter set complete — confirmed</div><div class="ai-who">Owner · Done</div></div></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Permit Status</div>
+          <div class="di"><span class="di-name">Building Permit</span><span class="bdg b-grn">Issued</span></div>
+          <div class="di"><span class="di-name">SCDES NPDES/CGP</span><span class="bdg b-grn">Active</span></div>
+          <div class="di"><span class="di-name">SC OSFM</span><span class="bdg b-grn">Approved</span></div>
+          <div class="di"><span class="di-name">Certificate of Occupancy</span><span class="bdg b-yel">Pending Inspections</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 5: CLOSEOUT -->
+<div class="phase-section">
+  <div class="phase-header ph5" onclick="togglePhase('ph5',this)">
+    <div class="phase-left">
+      <div class="phase-num">5</div>
+      <div>
+        <div class="phase-name">Closeout &amp; CO</div>
+        <div class="phase-sub">Punch list, final inspections, certificate of occupancy, tenant handoff</div>
+      </div>
+    </div>
+    <div class="phase-right">
+      <span class="phase-count">1 project</span>
+      <span class="phase-arrow">&#9660;</span>
+    </div>
+  </div>
+  <div class="phase-body" id="ph5">
+    <div class="proj-grid">
+      <div class="proj-card" onclick="toggleDetail('d_cls1',this,'ph5')">
+        <div class="proj-code">SHW-TN-012</div>
+        <div class="proj-name">Sherwin-Williams</div>
+        <div class="proj-loc">Franklin, TN — Final Inspections</div>
+        <div class="prog-bar"><div class="prog-fill bar-red" style="width:88%"></div></div>
+        <div class="prog-row"><span>88% complete</span><span>Day 105 of 119</span></div>
+        <div class="proj-meta">
+          <div><div class="days-val" id="dv_cls1">--</div><div class="days-lbl">days to CO</div></div>
+          <div class="status-wrap"><div class="status-dot dot-red"></div><span class="status-txt txt-red">At Risk</span></div>
+        </div>
+        <div class="expand-hint">&#9660; click to expand</div>
+      </div>
+    </div>
+    <div class="detail-panel" id="d_cls1">
+      <div class="detail-hdr" style="background:#4d1a1a;border-color:#7a1f1f">
+        <div><div class="dh-title">SHW-TN-012 — Sherwin-Williams | Franklin, TN</div><div class="dh-sub">4820 Carothers Pkwy &nbsp;|&nbsp; 4,200 SF &nbsp;|&nbsp; GC: Landmark Builders TN &nbsp;|&nbsp; $920K</div></div>
+        <div style="text-align:right"><div class="dh-co" id="co_cls1">--d</div><div class="dh-co-lbl">to CO — 04/25/2026 — AT RISK</div></div>
+        <button class="close-btn" onclick="toggleDetail('d_cls1',null,'ph5')">&#x2715; close</button>
+      </div>
+      <div class="d3">
+        <div class="dc">
+          <div class="dc-title">Critical Dates <span class="bdg b-red">3 urgent</span></div>
+          <div class="di"><div><div class="di-name">Final MEP Inspection</div><div class="di-sub">04/05/2026</div></div><span class="cd-val txt-red" id="c1_cls1">--</span></div>
+          <div class="di"><div><div class="di-name">SHW Punch Walk</div><div class="di-sub">04/12/2026</div></div><span class="cd-val txt-red" id="c2_cls1">--</span></div>
+          <div class="di"><div><div class="di-name">CO Target</div><div class="di-sub">04/25/2026</div></div><span class="cd-val txt-red" id="c3_cls1">--</span></div>
+          <div class="di"><div><div class="di-name">Rent Commencement</div><div class="di-sub">05/01/2026</div></div><span class="cd-val txt-red" id="c4_cls1">--</span></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Action Items <span class="bdg b-red">4 critical</span></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#dc2626"></div><div><div class="ai-txt">HVAC punchlist — 6 items outstanding</div><div class="ai-who">GC · Due 04/04</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#dc2626"></div><div><div class="ai-txt">Fire alarm final inspection — reschedule required</div><div class="ai-who">GC · Overdue</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#dc2626"></div><div><div class="ai-txt">Exterior paint touch-up before SHW walk</div><div class="ai-who">GC · Due 04/10</div></div></div>
+          <div class="ai-item"><div class="ai-dot" style="background:#d97706"></div><div><div class="ai-txt">CO application — file immediately</div><div class="ai-who">GC · Due 04/05</div></div></div>
+        </div>
+        <div class="dc">
+          <div class="dc-title">Permit Status</div>
+          <div class="di"><span class="di-name">Building Permit</span><span class="bdg b-grn">Issued</span></div>
+          <div class="di"><span class="di-name">Electrical Final</span><span class="bdg b-grn">Passed</span></div>
+          <div class="di"><span class="di-name">Plumbing Final</span><span class="bdg b-grn">Passed</span></div>
+          <div class="di"><span class="di-name">Mechanical Final</span><span class="bdg b-yel">Scheduled 04/05</span></div>
+          <div class="di"><span class="di-name">Fire Alarm Final</span><span class="bdg b-red">Reschedule Needed</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Baseline Construction — Portfolio Dashboard &nbsp;|&nbsp; <span id="footer-date"></span> &nbsp;|&nbsp; Countdowns update live from date of viewing</div>
+</div>
+
+<script>
+function days(dt){return Math.ceil((new Date(dt)-new Date())/864e5);}
+function setD(id,dt,cls){const e=document.getElementById(id);if(!e)return;e.textContent=days(dt)+'d';if(cls)e.className='cd-val '+cls;}
+
+const now=new Date();
+document.getElementById('today').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+document.getElementById('footer-date').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+document.getElementById('next-co').textContent=days('2026-04-25')+'d';
+
+// Acquisition
+document.getElementById('dv_acq2').textContent=days('2026-05-15');
+document.getElementById('co_acq2').textContent=days('2026-05-15')+'d';
+setD('dd_acq1','2026-04-30','');
+setD('dd_acq2','2026-05-15','');
+
+// Entitlements
+document.getElementById('dv_ent1').textContent=days('2026-05-01');
+document.getElementById('co_ent1').textContent=days('2026-05-01')+'d';
+setD('dd_ent1','2026-04-08','');
+
+// Preconstruction
+document.getElementById('dv_pre1').textContent=days('2026-04-13');
+document.getElementById('co_pre1').textContent=days('2026-08-27')+'d';
+setD('dd_pre1','2026-04-20','');
+
+// Construction
+document.getElementById('dv_con1').textContent=days('2026-08-15');
+document.getElementById('co_con1').textContent=days('2026-08-15')+'d';
+setD('c1_con1','2026-04-05','cd-val txt-red');
+setD('c2_con1','2026-05-01','');
+setD('c3_con1','2026-08-01','cd-val');
+setD('c4_con1','2026-08-15','cd-val');
+
+document.getElementById('dv_con2').textContent=days('2026-05-30');
+document.getElementById('co_con2').textContent=days('2026-05-30')+'d';
+setD('c1_con2','2026-05-15','');
+setD('c2_con2','2026-05-20','cd-val');
+setD('c3_con2','2026-05-30','cd-val');
+setD('c4_con2','2026-06-01','cd-val');
+
+// Closeout
+document.getElementById('dv_cls1').textContent=days('2026-04-25');
+document.getElementById('co_cls1').textContent=days('2026-04-25')+'d';
+setD('c1_cls1','2026-04-05','cd-val txt-red');
+setD('c2_cls1','2026-04-12','cd-val txt-red');
+setD('c3_cls1','2026-04-25','cd-val txt-red');
+setD('c4_cls1','2026-05-01','cd-val txt-red');
+
+// Phase toggles — open phase 4 by default
+function togglePhase(id,hdr){
+  const body=document.getElementById(id);
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open');
+  if(hdr)hdr.classList.toggle('open');
+}
+
+// Open construction by default
+document.getElementById('ph4').classList.add('open');
+document.querySelectorAll('.phase-header')[3].classList.add('open');
+
+// Detail panels — only one open per phase
+function toggleDetail(id,card,phaseId){
+  const phase=document.getElementById(phaseId);
+  const panel=document.getElementById(id);
+  const isOpen=panel.classList.contains('open');
+  phase.querySelectorAll('.detail-panel').forEach(p=>p.classList.remove('open'));
+  phase.querySelectorAll('.proj-card').forEach(c=>c.classList.remove('active'));
+  if(!isOpen){
+    panel.classList.add('open');
+    if(card)card.classList.add('active');
+    setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+  }
+}
+</script>
+</body>
+</html>
