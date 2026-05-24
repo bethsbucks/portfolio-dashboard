@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import {
-  Activity,
   AlertTriangle,
   ArrowUpRight,
   BarChart3,
@@ -33,8 +32,9 @@ import {
   parseCsvWithDiagnostics,
   detectLeveragedETF,
 } from './utils/portfolioUtils.js'
+import trailerTrashLogo from './assets/trailer-trash-trading-header-logo.webp'
 
-const navTabs = ['Overview', 'Positions', 'Options', 'Watchlist', 'Risk Board', 'Trade Plan', 'Settings']
+const navTabs = ['Overview', 'Positions', 'Options', 'Watchlist', 'Trade Plan', 'Settings']
 
 const badgeClasses = {
   good: 'bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-400/10',
@@ -648,31 +648,25 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen text-slate-100">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-8 rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_20px_100px_-40px_rgba(15,23,42,0.85)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+    <div className="theme-neon min-h-screen text-slate-100">
+      <div className="mx-auto max-w-[1800px] px-4 py-5 sm:px-6 lg:px-8">
+        <div className="brand-header mb-5 rounded-[2rem] border border-cyan-400/15 bg-slate-950/85 p-3 shadow-[0_0_80px_rgba(6,182,212,0.14)] ring-1 ring-cyan-300/10 backdrop-blur-xl">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-3xl bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-400/15">
-                <Activity className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-slate-500">Portfolio cockpit</p>
-                <h1 className="text-xl font-semibold text-white">Trading Portfolio</h1>
-              </div>
+            <div className="flex min-w-[280px] items-center">
+              <img src={trailerTrashLogo} alt="Trailer Trash Trading Portfolio Cockpit" className="h-24 w-auto max-w-full rounded-[1.25rem] object-contain drop-shadow-[0_0_28px_rgba(34,211,238,0.28)]" />
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="flex flex-1 flex-wrap items-center justify-center gap-3">
               <nav className="flex flex-wrap items-center justify-center gap-2">
                 {navTabs.map((tab) => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    className={`rounded-3xl border px-4 py-2 text-sm font-medium transition duration-200 ${
+                    className={`neon-nav rounded-3xl border px-4 py-2 text-sm font-semibold transition duration-200 ${
                       activeTab === tab
-                        ? 'border-cyan-400/30 bg-slate-950 text-white shadow-sm shadow-cyan-500/10 ring-1 ring-cyan-400/20'
-                        : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-600 hover:bg-slate-900 hover:text-slate-100'
+                        ? 'is-active border-cyan-300/70 bg-cyan-400/10 text-white shadow-[0_0_24px_rgba(34,211,238,0.28)] ring-1 ring-cyan-300/40'
+                        : 'border-white/10 bg-black/45 text-slate-300 hover:border-cyan-300/35 hover:bg-cyan-400/10 hover:text-white'
                     }`}
                   >
                     {tab}
@@ -681,13 +675,13 @@ function App() {
               </nav>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-3xl border border-slate-800 bg-slate-950/90 px-4 py-2 text-sm text-slate-100 shadow-sm ring-1 ring-slate-800/40 hover:bg-slate-900">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-3xl border border-cyan-300/20 bg-black/45 px-4 py-2 text-sm font-semibold text-slate-100 shadow-[0_0_18px_rgba(34,211,238,0.12)] ring-1 ring-cyan-300/10 hover:bg-cyan-400/10">
                 <Download className="h-4 w-4 text-cyan-300" />
                 <span>Import CSV</span>
                 <input type="file" accept=".csv" onChange={handleCsvUpload} className="hidden" />
               </label>
-              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/15 bg-cyan-400/10 px-3 py-2 text-xs font-semibold text-cyan-200 ring-1 ring-cyan-400/20">
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-400/15 px-3 py-2 text-xs font-semibold text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.18)] ring-1 ring-cyan-400/20">
                 <ShieldCheck className="h-4 w-4 text-cyan-300" />
                 Local only
               </div>
@@ -699,7 +693,7 @@ function App() {
           {activeTab === 'Overview' && (
             <section className="space-y-3">
               <div className="grid gap-3 xl:grid-cols-[repeat(5,minmax(0,1fr))] items-start">
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-cyan-400/10">
+                <div className="metric-card metric-card-cyan rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-cyan-400/10">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-slate-500">Total portfolio</p>
@@ -710,7 +704,7 @@ function App() {
                   <p className="mt-3 text-xs text-slate-400">Updated locally with current cash, stock and option exposure.</p>
                 </div>
 
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-emerald-400/10">
+                <div className="metric-card metric-card-emerald rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-emerald-400/10">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-slate-500">Cash & short-term</p>
@@ -721,7 +715,7 @@ function App() {
                   <p className="mt-3 text-xs text-slate-400">{formatPercent(cashPercent)} of portfolio</p>
                 </div>
 
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
+                <div className="metric-card metric-card-emerald rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-slate-500">Unrealized P/L</p>
@@ -734,7 +728,7 @@ function App() {
                   <p className="mt-3 text-xs text-slate-400">Net performance across current positions.</p>
                 </div>
 
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-fuchsia-400/10">
+                <div className="metric-card metric-card-violet rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-fuchsia-400/10">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-slate-500">Largest position</p>
@@ -745,7 +739,7 @@ function App() {
                   <p className="mt-3 text-xs text-slate-400">{largestPositionLabel}</p>
                 </div>
 
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-amber-400/10">
+                <div className="metric-card metric-card-amber rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-amber-400/10">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-amber-300">Short Put Exposure</p>
@@ -1570,80 +1564,6 @@ function App() {
                   placeholder="Capture your current trade plan, ideas and reminders."
                   className="min-h-[220px] w-full rounded-[1.5rem] border border-slate-800 bg-slate-950/90 px-5 py-4 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40 shadow-sm focus:ring-cyan-400/40"
                 />
-              </div>
-            </section>
-          )}
-
-          {activeTab === 'Risk Board' && (
-            <section className="space-y-6">
-              <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                  <div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Risk Board</p>
-                    <h2 className="mt-2 text-2xl font-semibold text-white">Risk insights</h2>
-                  </div>
-                  <div className="rounded-3xl bg-slate-950/70 px-4 py-3 text-sm text-slate-300 ring-1 ring-white/10">
-                    {metrics.positionsCount} positions across the portfolio
-                  </div>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {riskCards.map((card) => (
-                    <div key={card.label} className={`rounded-[1.75rem] border border-slate-800/90 p-5 ${badgeClasses[card.status]}`}>
-                      <p className="text-sm uppercase tracking-[0.24em] text-slate-300">{card.label}</p>
-                      <p className="mt-4 text-3xl font-semibold text-white">{card.value}</p>
-                      <p className="mt-2 text-sm text-slate-300">{card.detail}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
-                <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Market Shock / Reset Board</p>
-                  <h3 className="mt-3 text-xl font-semibold text-white">Quick reaction setup</h3>
-                  <ul className="mt-6 space-y-3 text-sm text-slate-300">
-                    <li className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/70 px-4 py-3">
-                      <span>Cash allocation</span>
-                      <strong>{formatPercent(metrics.totalMarketValue ? (Math.abs(metrics.cashValue) / Math.abs(metrics.totalMarketValue)) * 100 : 0)}</strong>
-                    </li>
-                    <li className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/70 px-4 py-3">
-                      <span>Hedge allocation</span>
-                      <strong>{formatPercent(metrics.hedgeAllocation)}</strong>
-                    </li>
-                    <li className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/70 px-4 py-3">
-                      <span>Leveraged ETF exposure</span>
-                      <strong>{formatPercent(metrics.leveragedExposure)}</strong>
-                    </li>
-                    <li className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/70 px-4 py-3">
-                      <span>Speculative exposure</span>
-                      <strong>{formatPercent(metrics.speculativeAllocation)}</strong>
-                    </li>
-                    <li className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/70 px-4 py-3">
-                      <span>Top 5 concentration</span>
-                      <strong>{formatPercent(metrics.top5ConcentrationPercent)}</strong>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Trim first</p>
-                  <h3 className="mt-3 text-xl font-semibold text-white">Suggested reset list</h3>
-                  <div className="mt-6 space-y-3">
-                    {marketShock.length ? marketShock.map((item) => (
-                      <div key={item.id} className="rounded-3xl border border-slate-800/80 bg-slate-950/80 px-4 py-3 text-sm text-slate-200">
-                        <div className="flex items-center justify-between gap-4">
-                          <span>{item.ticker}</span>
-                          <span className="text-slate-400">{formatPercent(item.weight)}</span>
-                        </div>
-                        <p className="mt-1 text-slate-400">{item.reason}</p>
-                      </div>
-                    )) : (
-                      <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 px-4 py-3 text-sm text-slate-400">
-                        No trim candidates identified.
-                      </div>
-                    )}
-                  </div>
-                </div>
               </div>
             </section>
           )}
