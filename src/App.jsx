@@ -576,7 +576,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen text-slate-100">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-8 rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_20px_100px_-40px_rgba(15,23,42,0.85)] ring-1 ring-slate-800/60 backdrop-blur-xl">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -586,7 +586,7 @@ function App() {
               </div>
               <div>
                 <p className="text-xs uppercase tracking-[0.35em] text-slate-500">Portfolio cockpit</p>
-                <h1 className="text-xl font-semibold text-white">Local Trading Portfolio</h1>
+                <h1 className="text-xl font-semibold text-white">Trading Portfolio</h1>
               </div>
             </div>
 
@@ -673,7 +673,7 @@ function App() {
                   <p className="mt-3 text-xs text-slate-400">{largestPositionLabel}</p>
                 </div>
 
-                <div className="rounded-[1.75rem] border border-amber-600/30 bg-amber-700/5 p-4 shadow-[0_12px_48px_-24px_rgba(250,204,21,0.06)] ring-1 ring-amber-400/8">
+                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-amber-400/10">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-amber-300">Short Put Exposure</p>
