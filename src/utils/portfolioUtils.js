@@ -9,12 +9,13 @@ export const STORAGE_KEYS = {
 }
 
 export const assetTypes = ['All', 'Stock', 'ETF', 'Option', 'Cash', 'Hedge', 'Other']
-export const strategyBuckets = ['All', 'Core Conviction', 'Options', 'Speculative', 'Hedge', 'Cash', 'Watchlist', 'Other']
+export const strategyBuckets = ['All', 'Core', 'Options', 'Speculative', 'Hedge', 'Cash', 'Watchlist', 'Other']
 
 export const normalizeStrategyBucket = (value) => {
   const text = String(value || '').trim()
   if (!text) return text
   if (text === 'Income/Options') return 'Options'
+  if (text === 'Core Conviction') return 'Core'
   return text
 }
 export const optionTypes = [
@@ -283,7 +284,7 @@ const normalizeRow = (row, index) => {
   if (!strategyBucket) {
     if (assetType === 'Cash') strategyBucket = 'Cash'
     else if (assetType === 'Option') strategyBucket = 'Options'
-    else if (assetType === 'Stock') strategyBucket = 'Core Conviction'
+    else if (assetType === 'Stock') strategyBucket = 'Core'
     else if (assetType === 'Hedge') strategyBucket = 'Hedge'
     else strategyBucket = 'Other'
   }
@@ -426,7 +427,7 @@ export const calculatePortfolioMetrics = (positions) => {
     .filter((position) => position.strategyBucket === 'Speculative')
     .reduce((sum, position) => sum + Math.abs(position.marketValue), 0) / absoluteTotalMarketValue * 100
   const coreAllocation = positions
-    .filter((position) => position.strategyBucket === 'Core Conviction')
+    .filter((position) => normalizeStrategyBucket(position.strategyBucket) === 'Core')
     .reduce((sum, position) => sum + Math.abs(position.marketValue), 0) / absoluteTotalMarketValue * 100
   const incomeAllocation = positions
     .filter((position) => normalizeStrategyBucket(position.strategyBucket) === 'Options')

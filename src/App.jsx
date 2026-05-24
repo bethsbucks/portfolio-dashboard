@@ -42,6 +42,16 @@ const badgeClasses = {
   danger: 'bg-rose-500/15 text-rose-200 ring-1 ring-rose-400/10',
 }
 
+const strategyColorMap = {
+  Core: '#38bdf8',
+  Options: '#8b5cf6',
+  Cash: '#22c55e',
+  Speculative: '#f97316',
+  Hedge: '#06b6d4',
+  'Leveraged ETF': '#f59e0b',
+  Other: '#64748b',
+}
+
 const optionCallTypes = ['Long Call', 'Short Call']
 const optionPutTypes = ['Long Put', 'Short Put']
 
@@ -86,7 +96,7 @@ const initialWatchlistForm = {
   buyZone: '',
   strongBuyZone: '',
   targetPositionPercent: '',
-  strategyBucket: 'Core Conviction',
+  strategyBucket: 'Core',
   notes: '',
 }
 
@@ -100,6 +110,7 @@ function App() {
   const [assetFilter, setAssetFilter] = useState('All')
   const [strategyFilter, setStrategyFilter] = useState('All')
   const [sortConfig, setSortConfig] = useState({ key: 'portfolioWeightPercent', direction: 'desc' })
+  const [optionSortConfig, setOptionSortConfig] = useState({ key: 'dte', direction: 'asc' })
   const [csvMessage, setCsvMessage] = useState('')
   const [jsonMessage, setJsonMessage] = useState('')
   const [csvDiagnostics, setCsvDiagnostics] = useState(null)
@@ -379,7 +390,54 @@ function App() {
   }, [filteredPositions, sortConfig])
 
   const optionRows = positions.filter((position) => position.assetType === 'Option')
-  const top10Overview = metrics.sortedByValue.slice(0, 10)
+  const sortedOptionRows = useMemo(() => {
+    const getOptionSortValue = (position) => {
+      if (optionSortConfig.key === 'underlying') return position.underlyingTicker || position.ticker
+      if (optionSortConfig.key === 'fullSymbol') return position.fullSymbol || position.description
+      if (optionSortConfig.key === 'dte') return calculateDte(position.expiration)
+      return position[optionSortConfig.key]
+    }
+
+    return [...optionRows].sort((a, b) => {
+      const left = getOptionSortValue(a)
+      const right = getOptionSortValue(b)
+
+      if (left === null || left === undefined || left === '') return 1
+      if (right === null || right === undefined || right === '') return -1
+      if (typeof left === 'number' && typeof right === 'number') {
+        return optionSortConfig.direction === 'asc' ? left - right : right - left
+      }
+      return optionSortConfig.direction === 'asc'
+        ? String(left).localeCompare(String(right))
+        : String(right).localeCompare(String(left))
+    })
+  }, [optionRows, optionSortConfig])
+  const top10Overview = useMemo(() => {
+    const portfolioBase = metrics.absoluteTotalMarketValue || 1
+    const groupedRows = positions.reduce((acc, position) => {
+      const key = getUnderlyingGroupKey(position)
+      if (!key) return acc
+      if (!acc[key]) {
+        acc[key] = {
+          id: `value-leader-${key}`,
+          ticker: key,
+          marketValue: 0,
+          absoluteMarketValue: 0,
+        }
+      }
+      acc[key].marketValue += position.marketValue
+      acc[key].absoluteMarketValue += Math.abs(position.marketValue)
+      return acc
+    }, {})
+
+    return Object.values(groupedRows)
+      .map((group) => ({
+        ...group,
+        portfolioWeightPercent: portfolioBase ? (group.absoluteMarketValue / portfolioBase) * 100 : 0,
+      }))
+      .sort((a, b) => b.absoluteMarketValue - a.absoluteMarketValue)
+      .slice(0, 10)
+  }, [positions, metrics.absoluteTotalMarketValue])
   const shortOptionCount = optionRows.filter((position) => position.quantity < 0).length
   const cashPercent = metrics.totalMarketValue ? (Math.abs(metrics.cashValue) / Math.abs(metrics.totalMarketValue)) * 100 : 0
   const largestNonCashPosition =
@@ -575,6 +633,20 @@ function App() {
     return sortConfig.direction === 'asc' ? '↑' : '↓'
   }
 
+  const handleOptionSort = (key) => {
+    setOptionSortConfig((current) => {
+      if (current.key === key) {
+        return { key, direction: current.direction === 'asc' ? 'desc' : 'asc' }
+      }
+      return { key, direction: key === 'dte' ? 'asc' : 'desc' }
+    })
+  }
+
+  const optionSortArrow = (key) => {
+    if (optionSortConfig.key !== key) return null
+    return optionSortConfig.direction === 'asc' ? '↑' : '↓'
+  }
+
   return (
     <div className="min-h-screen text-slate-100">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -716,7 +788,7 @@ function App() {
               </div>
 
               <div className="grid gap-3 xl:grid-cols-[1.3fr_1fr_0.9fr]">
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+                <div className="flex h-full flex-col rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Allocation by strategy</p>
@@ -724,22 +796,13 @@ function App() {
                     </div>
                     <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Live snapshot</div>
                   </div>
-                  <div className="sm:grid sm:grid-cols-2 gap-4 items-center">
+                  <div className="sm:grid sm:grid-cols-[0.95fr_1.05fr] gap-4 items-center">
                     <div className="relative h-56 flex items-center justify-center">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Pie data={metrics.allocationByStrategy.filter((slice) => slice.value > 0)} dataKey="value" nameKey="name" innerRadius={56} outerRadius={86} paddingAngle={3} stroke="transparent">
+                          <Pie data={metrics.allocationByStrategy.filter((slice) => slice.value > 0)} dataKey="value" nameKey="name" innerRadius={56} outerRadius={91} paddingAngle={4} stroke="#0f172a" strokeWidth={3}>
                             {metrics.allocationByStrategy.filter((slice) => slice.value > 0).map((entry) => {
-                              const colorMap = {
-                                'Core Conviction': '#38bdf8',
-                                'Options': '#8b5cf6',
-                                'Cash': '#22c55e',
-                                'Speculative': '#f97316',
-                                'Hedge': '#06b6d4',
-                                'Leveraged ETF': '#f59e0b',
-                                'Other': '#64748b',
-                              }
-                              const fill = colorMap[entry.name] || '#94a3b8'
+                              const fill = strategyColorMap[entry.name] || '#94a3b8'
                               return <Cell key={entry.name} fill={fill} />
                             })}
                           </Pie>
@@ -750,8 +813,8 @@ function App() {
                       {/* Center total overlay */}
                       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                         <div className="text-center">
-                          <div className="text-sm text-slate-400">Total</div>
-                          <div className="mt-1 text-lg font-semibold text-white">{formatCurrency(metrics.totalMarketValue)}</div>
+                          <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Total</div>
+                          <div className="mt-1 text-xl font-semibold text-white">{formatCurrency(metrics.totalMarketValue)}</div>
                         </div>
                       </div>
                     </div>
@@ -759,27 +822,23 @@ function App() {
                     <div className="min-w-0">
                       <div className="space-y-2">
                         {metrics.allocationByStrategy.filter((slice) => slice.value > 0).map((entry) => {
-                          const colorMap = {
-                            'Core Conviction': '#38bdf8',
-                            'Options': '#8b5cf6',
-                            'Cash': '#22c55e',
-                            'Speculative': '#f97316',
-                            'Hedge': '#06b6d4',
-                            'Leveraged ETF': '#f59e0b',
-                            'Other': '#64748b',
-                          }
-                          const fill = colorMap[entry.name] || '#94a3b8'
+                          const fill = strategyColorMap[entry.name] || '#94a3b8'
                           const pct = metrics.absoluteTotalMarketValue ? (entry.value / metrics.absoluteTotalMarketValue) * 100 : 0
                           return (
-                            <div key={entry.name} className="flex items-center justify-between gap-3">
-                              <div className="flex items-center gap-3 min-w-0">
-                                <span className="inline-block h-3 w-3 rounded-full" style={{ background: fill }} />
-                                <div className="truncate">
-                                  <div className="text-sm font-medium text-slate-100 truncate">{entry.name}</div>
-                                  <div className="text-xs text-slate-400 truncate">{formatCurrency(entry.value)}</div>
+                            <div key={entry.name} className="rounded-2xl border border-white/5 bg-slate-950/35 px-3 py-2">
+                              <div className="flex items-center justify-between gap-3">
+                                <div className="flex min-w-0 items-center gap-2">
+                                  <span className="h-2.5 w-2.5 rounded-full shadow-[0_0_18px_currentColor]" style={{ background: fill, color: fill }} />
+                                  <div className="truncate">
+                                    <div className="truncate text-sm font-semibold text-slate-100">{entry.name}</div>
+                                    <div className="truncate text-xs text-slate-500">{formatCurrency(entry.value)}</div>
+                                  </div>
                                 </div>
+                                <div className="text-sm font-semibold text-slate-100">{formatPercent(pct)}</div>
                               </div>
-                              <div className="text-sm text-slate-300">{formatPercent(pct)}</div>
+                              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800/80">
+                                <div className="h-full rounded-full" style={{ width: `${Math.min(100, pct)}%`, background: fill }} />
+                              </div>
                             </div>
                           )
                         })}
@@ -787,17 +846,31 @@ function App() {
                     </div>
                   </div>
 
-                  {/* Footer summary */}
-                  <div className="mt-3 flex items-center justify-between gap-3 text-xs text-slate-300">
+                  <div className="mt-auto grid gap-2 pt-5 text-xs text-slate-300 sm:grid-cols-3">
                     {(() => {
                       const nonZero = metrics.allocationByStrategy.filter((s) => s.value > 0)
                       const largest = nonZero.reduce((a, b) => (a.value >= b.value ? a : b), { name: '—', value: 0 })
                       const cashPct = metrics.totalMarketValue ? (Math.abs(metrics.cashValue) / Math.abs(metrics.totalMarketValue)) * 100 : 0
                       return (
                         <>
-                          <div className="flex items-center gap-2"><strong className="text-white">{largest.name}</strong><span className="text-slate-400">{formatPercent(metrics.absoluteTotalMarketValue ? (largest.value / metrics.absoluteTotalMarketValue) * 100 : 0)}</span></div>
-                          <div className="flex items-center gap-2"><span className="text-slate-400">Cash</span><strong className="text-white">{formatPercent(cashPct)}</strong></div>
-                          <div className="flex items-center gap-2"><span className="text-slate-400">Options</span><strong className="text-white">{formatPercent(metrics.incomeAllocation)}</strong></div>
+                          <div className="rounded-2xl border border-cyan-400/10 bg-cyan-400/10 px-3 py-3">
+                            <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-200/70">Lead strategy</p>
+                            <div className="mt-1 flex items-baseline justify-between gap-2">
+                              <strong className="truncate text-sm text-white">{largest.name}</strong>
+                              <span className="text-sm font-semibold text-cyan-100">{formatPercent(metrics.absoluteTotalMarketValue ? (largest.value / metrics.absoluteTotalMarketValue) * 100 : 0)}</span>
+                            </div>
+                          </div>
+                          <div className="rounded-2xl border border-emerald-400/10 bg-emerald-400/10 px-3 py-3">
+                            <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-200/70">Cash ready</p>
+                            <div className="mt-1 flex items-baseline justify-between gap-2">
+                              <strong className="text-sm text-white">{formatCurrency(metrics.cashValue)}</strong>
+                              <span className="text-sm font-semibold text-emerald-100">{formatPercent(cashPct)}</span>
+                            </div>
+                          </div>
+                          <div className="rounded-2xl border border-violet-400/10 bg-violet-400/10 px-3 py-3">
+                            <p className="text-[10px] uppercase tracking-[0.2em] text-violet-200/70">Options income</p>
+                            <strong className="mt-1 block text-sm text-white">{formatPercent(metrics.incomeAllocation)}</strong>
+                          </div>
                         </>
                       )
                     })()}
@@ -813,11 +886,10 @@ function App() {
                     <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Compact view</div>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className="min-w-[620px] w-full divide-y divide-slate-800 text-sm">
+                    <table className="min-w-full w-full divide-y divide-slate-800 text-sm">
                       <thead className="bg-slate-950/70 text-slate-400">
                         <tr>
                           <th className="px-2 py-2 text-left uppercase tracking-[0.18em]">Ticker</th>
-                          <th className="px-2 py-2 text-left uppercase tracking-[0.18em]">Description</th>
                           <th className="px-2 py-2 text-right uppercase tracking-[0.18em]">Market Value</th>
                           <th className="px-2 py-2 text-right uppercase tracking-[0.18em]">% Portfolio</th>
                         </tr>
@@ -826,7 +898,6 @@ function App() {
                         {top10Overview.map((position) => (
                           <tr key={position.id} className="hover:bg-slate-900/80 transition-colors duration-150">
                             <td className="px-2 py-2 text-slate-100 font-medium">{position.ticker}</td>
-                            <td className="px-2 py-2 text-slate-300 truncate max-w-[140px]">{position.description || position.ticker}</td>
                             <td className="px-2 py-2 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
                             <td className="px-2 py-2 text-right text-slate-100">{formatPercent(position.portfolioWeightPercent)}</td>
                           </tr>
@@ -992,13 +1063,25 @@ function App() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-[2rem] border border-slate-800/90 bg-slate-900/80 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60 backdrop-blur-xl">
-                <table className="min-w-[1300px] w-full divide-y divide-slate-800 text-sm table-auto">
+              <div className="overflow-hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/80 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+                <table className="w-full table-fixed divide-y divide-slate-800 text-[11px]">
+                  <colgroup>
+                    <col className="w-[8%]" />
+                    <col className="w-[19%]" />
+                    <col className="w-[10%]" />
+                    <col className="w-[9%]" />
+                    <col className="w-[8%]" />
+                    <col className="w-[8%]" />
+                    <col className="w-[10%]" />
+                    <col className="w-[10%]" />
+                    <col className="w-[10%]" />
+                    <col className="w-[8%]" />
+                  </colgroup>
                   <thead className="bg-slate-950/70 text-slate-400">
                     <tr>
-                      {['Ticker', 'Description', 'Asset Type', 'Strategy Bucket', 'Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %', 'Target %', 'Over/Under', 'Notes'].map((label) => (
-                        <th key={label} className="px-4 py-3 text-left whitespace-nowrap text-xs font-semibold uppercase tracking-[0.26em] text-slate-400">
-                          <button type="button" onClick={() => handleSort(label.replace(/\s+/g, '').charAt(0).toLowerCase() + label.replace(/\s+/g, '').slice(1))} className="inline-flex items-center gap-2">
+                      {['Ticker', 'Description', 'Asset Type', 'Strategy Bucket', 'Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %'].map((label) => (
+                        <th key={label} className="px-2 py-3 align-middle text-left text-[10px] font-semibold uppercase leading-tight tracking-[0.1em] text-slate-400">
+                          <button type="button" onClick={() => handleSort(label.replace(/\s+/g, '').charAt(0).toLowerCase() + label.replace(/\s+/g, '').slice(1))} className="inline-flex min-h-7 items-center gap-2 leading-tight">
                             {label}
                             <span>{sortArrow(label.replace(/\s+/g, '').charAt(0).toLowerCase() + label.replace(/\s+/g, '').slice(1))}</span>
                           </button>
@@ -1008,10 +1091,9 @@ function App() {
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {sortedPositions.length ? sortedPositions.map((position) => {
-                      const difference = position.portfolioWeightPercent - position.targetWeightPercent
                       return (
                         <tr key={position.id} className="hover:bg-slate-900/80 transition-colors duration-150">
-                          <td className="px-4 py-3 text-slate-100">
+                          <td className="px-2 py-3 text-slate-100">
                             {position.assetType === 'Option' && position.fullSymbol ? (
                               <div className="space-y-1">
                                 <div>{position.underlyingTicker || position.ticker}</div>
@@ -1021,39 +1103,32 @@ function App() {
                               position.ticker
                             )}
                           </td>
-                          <td className="px-4 py-3 text-slate-300">{position.description}</td>
-                          <td className="px-4 py-3">
-                            <select value={position.assetType} onChange={(e) => handlePositionChange(position.id, 'assetType', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40">
+                          <td className="truncate px-2 py-3 text-slate-300">{position.description}</td>
+                          <td className="px-2 py-3">
+                            <select value={position.assetType} onChange={(e) => handlePositionChange(position.id, 'assetType', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-2 py-2 text-[11px] text-slate-100 outline-none ring-1 ring-slate-800/40">
                               {assetTypes.slice(1).map((value) => (
                                 <option key={value} value={value}>{value}</option>
                               ))}
                             </select>
                           </td>
-                          <td className="px-4 py-3">
-                            <select value={position.strategyBucket} onChange={(e) => handlePositionChange(position.id, 'strategyBucket', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40">
+                          <td className="px-2 py-3">
+                            <select value={position.strategyBucket} onChange={(e) => handlePositionChange(position.id, 'strategyBucket', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-2 py-2 text-[10px] text-slate-100 outline-none ring-1 ring-slate-800/40">
                               {strategyBuckets.slice(1).map((value) => (
                                 <option key={value} value={value}>{value}</option>
                               ))}
                             </select>
                           </td>
-                          <td className="px-4 py-3 text-slate-100">{formatQuantity(position.quantity)}</td>
-                          <td className="px-4 py-3 text-slate-100">{formatCurrency(position.avgCost)}</td>
-                          <td className="px-4 py-3 text-slate-100">{formatCurrency(position.currentPrice)}</td>
-                          <td className="px-4 py-3 text-slate-100">{formatCurrency(position.marketValue)}</td>
-                          <td className={`px-4 py-3 ${position.unrealizedPL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{formatCurrency(position.unrealizedPL)}</td>
-                          <td className="px-4 py-3 text-slate-100">{formatPercent(position.portfolioWeightPercent)}</td>
-                          <td className="px-4 py-3 text-slate-100">
-                            <input type="number" step="0.1" min="0" value={position.targetWeightPercent} onChange={(e) => handlePositionChange(position.id, 'targetWeightPercent', e.target.value)} className="w-24 rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40" />
-                          </td>
-                          <td className={`px-4 py-3 ${difference > 0 ? 'text-rose-400' : 'text-slate-300'}`}>{difference.toFixed(1)}%</td>
-                          <td className="px-4 py-3">
-                            <input type="text" value={position.notes} onChange={(e) => handlePositionChange(position.id, 'notes', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40" />
-                          </td>
+                          <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatQuantity(position.quantity)}</td>
+                          <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatCurrency(position.avgCost)}</td>
+                          <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatCurrency(position.currentPrice)}</td>
+                          <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
+                          <td className={`whitespace-nowrap px-2 py-3 text-right ${position.unrealizedPL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{formatCurrency(position.unrealizedPL)}</td>
+                          <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatPercent(position.portfolioWeightPercent)}</td>
                         </tr>
                       )
                     }) : (
                       <tr>
-                        <td colSpan={13} className="px-4 py-12 text-center text-slate-400">
+                        <td colSpan={10} className="px-4 py-12 text-center text-slate-400">
                           No positions found. Upload a CSV or load sample data to begin.
                         </td>
                       </tr>
@@ -1080,13 +1155,33 @@ function App() {
                   <table className="min-w-full divide-y divide-slate-800 text-sm">
                     <thead className="bg-slate-950/70 text-slate-400">
                       <tr>
-                        {['Underlying', 'Full symbol', 'Option Type', 'Quantity', 'Strike', 'Expiration', 'DTE', 'Current Price', 'Market Value', 'Unrealized P/L', 'Delta', 'Theta', 'Strategy Bucket', 'Notes'].map((label) => (
-                          <th key={label} className="px-4 py-3 text-left uppercase tracking-[0.2em] text-slate-400">{label}</th>
+                        {[
+                          ['Underlying', 'underlying'],
+                          ['Full symbol', 'fullSymbol'],
+                          ['Option Type', 'optionType'],
+                          ['Quantity', 'quantity'],
+                          ['Strike', 'strike'],
+                          ['Expiration', 'expiration'],
+                          ['DTE', 'dte'],
+                          ['Current Price', 'currentPrice'],
+                          ['Market Value', 'marketValue'],
+                          ['Unrealized P/L', 'unrealizedPL'],
+                          ['Delta', 'delta'],
+                          ['Theta', 'theta'],
+                          ['Strategy Bucket', 'strategyBucket'],
+                          ['Notes', 'notes'],
+                        ].map(([label, key]) => (
+                          <th key={key} className="px-4 py-3 text-left uppercase tracking-[0.2em] text-slate-400">
+                            <button type="button" onClick={() => handleOptionSort(key)} className="inline-flex items-center gap-2">
+                              {label}
+                              <span>{optionSortArrow(key)}</span>
+                            </button>
+                          </th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800">
-                      {optionRows.length ? optionRows.map((position) => {
+                      {sortedOptionRows.length ? sortedOptionRows.map((position) => {
                         const dte = calculateDte(position.expiration)
                         const rowStyle = dte === null ? 'bg-slate-950/80' : dte <= 7 ? 'bg-rose-500/10' : dte <= 14 ? 'bg-amber-500/10' : dte <= 30 ? 'bg-slate-600/10' : 'bg-transparent'
                         return (
@@ -1109,7 +1204,7 @@ function App() {
                         )
                       }) : (
                         <tr>
-                          <td colSpan={13} className="px-4 py-12 text-center text-slate-400">
+                          <td colSpan={14} className="px-4 py-12 text-center text-slate-400">
                             No option positions available. Load sample portfolio or import your CSV data.
                           </td>
                         </tr>
