@@ -36,6 +36,15 @@ import trailerTrashLogo from './assets/trailer-trash-trading-header-logo.webp'
 
 const navTabs = ['Overview', 'Positions', 'Options', 'Watchlist', 'Trade Plan', 'Settings']
 
+const navIcons = {
+  Overview: Sparkles,
+  Positions: BarChart3,
+  Options: CircleDollarSign,
+  Watchlist: Bell,
+  'Trade Plan': ArrowUpRight,
+  Settings: RefreshCcw,
+}
+
 const badgeClasses = {
   good: 'bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-400/10',
   warning: 'bg-amber-500/15 text-amber-200 ring-1 ring-amber-400/10',
@@ -658,20 +667,26 @@ function App() {
 
             <div className="flex flex-1 flex-wrap items-center justify-center gap-3">
               <nav className="flex flex-wrap items-center justify-center gap-2">
-                {navTabs.map((tab) => (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => setActiveTab(tab)}
-                    className={`neon-nav rounded-3xl border px-4 py-2 text-sm font-semibold transition duration-200 ${
-                      activeTab === tab
-                        ? 'is-active border-cyan-300/70 bg-cyan-400/10 text-white shadow-[0_0_24px_rgba(34,211,238,0.28)] ring-1 ring-cyan-300/40'
-                        : 'border-white/10 bg-black/45 text-slate-300 hover:border-cyan-300/35 hover:bg-cyan-400/10 hover:text-white'
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                ))}
+                {navTabs.map((tab) => {
+                  const Icon = navIcons[tab]
+                  return (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setActiveTab(tab)}
+                      className={`neon-nav rounded-3xl border px-4 py-2 text-sm font-semibold transition duration-200 ${
+                        activeTab === tab
+                          ? 'is-active border-cyan-300/70 bg-cyan-400/10 text-white shadow-[0_0_24px_rgba(34,211,238,0.28)] ring-1 ring-cyan-300/40'
+                          : 'border-white/10 bg-black/45 text-slate-300 hover:border-cyan-300/35 hover:bg-cyan-400/10 hover:text-white'
+                      }`}
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <Icon className={`h-4 w-4 ${activeTab === tab ? 'text-cyan-200' : 'text-slate-500'}`} />
+                        {tab}
+                      </span>
+                    </button>
+                  )
+                })}
               </nav>
             </div>
 
