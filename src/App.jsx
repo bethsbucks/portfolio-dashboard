@@ -937,35 +937,7 @@ function App() {
                 </div>
               </div>
 
-              <div className="grid gap-3 xl:grid-cols-[0.95fr_0.7fr_0.95fr]">
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
-                  <div className="mb-4 flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Options exposure</p>
-                      <h3 className="mt-2 text-lg font-semibold text-white">Options position</h3>
-                    </div>
-                    <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Current</div>
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-3xl bg-slate-950/80 p-3 text-sm">
-                      <p className="text-slate-400">Exposure%</p>
-                      <p className="mt-2 text-3xl font-semibold text-cyan-300">{formatPercent(metrics.optionsExposure)}</p>
-                    </div>
-                    <div className="rounded-3xl bg-slate-950/80 p-3 text-sm">
-                      <p className="text-slate-400">Gross options</p>
-                      <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(metrics.grossOptionValue)}</p>
-                    </div>
-                    <div className="rounded-3xl bg-slate-950/80 p-3 text-sm">
-                      <p className="text-slate-400">Net options</p>
-                      <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(metrics.netOptionValue)}</p>
-                    </div>
-                    <div className="rounded-3xl bg-slate-950/80 p-3 text-sm">
-                      <p className="text-slate-400">Max allowed</p>
-                      <p className="mt-2 text-2xl font-semibold text-white">{formatPercent(settings.maxOptionsExposurePercent)}</p>
-                    </div>
-                  </div>
-                </div>
-
+              <div className="space-y-3">
                 <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div>
@@ -974,7 +946,7 @@ function App() {
                     </div>
                     <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Status</div>
                   </div>
-                  <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-5">
                     {riskCards.map((card) => (
                       <div key={card.label} className={`rounded-3xl border p-3 ${badgeClasses[card.status]} border-slate-800/80 bg-slate-950/80`}>
                         <p className="text-[11px] uppercase tracking-[0.22em] text-slate-400">{card.label}</p>
@@ -985,32 +957,62 @@ function App() {
                   </div>
                 </div>
 
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
-                  <div className="mb-4 flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Market shock</p>
-                      <h3 className="mt-2 text-lg font-semibold text-white">Risk outlook</h3>
+                <div className="grid gap-3 xl:grid-cols-2">
+                  <div className="min-h-[260px] rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+                    <div className="mb-4 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Options exposure</p>
+                        <h3 className="mt-2 text-lg font-semibold text-white">Options position</h3>
+                      </div>
+                      <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Current</div>
                     </div>
-                    <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Guidance</div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="rounded-3xl bg-slate-950/80 p-4 text-sm">
+                        <p className="text-slate-400">Exposure%</p>
+                        <p className="mt-3 text-3xl font-semibold text-cyan-300">{formatPercent(metrics.optionsExposure)}</p>
+                      </div>
+                      <div className="rounded-3xl bg-slate-950/80 p-4 text-sm">
+                        <p className="text-slate-400">Gross options</p>
+                        <p className="mt-3 text-2xl font-semibold text-white">{formatCurrency(metrics.grossOptionValue)}</p>
+                      </div>
+                      <div className="rounded-3xl bg-slate-950/80 p-4 text-sm">
+                        <p className="text-slate-400">Net options</p>
+                        <p className="mt-3 text-2xl font-semibold text-white">{formatCurrency(metrics.netOptionValue)}</p>
+                      </div>
+                      <div className="rounded-3xl bg-slate-950/80 p-4 text-sm">
+                        <p className="text-slate-400">Max allowed</p>
+                        <p className="mt-3 text-2xl font-semibold text-white">{formatPercent(settings.maxOptionsExposurePercent)}</p>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-sm text-slate-400">This panel reflects current risk posture based on existing portfolio metrics. No additional scenario calculations are added.</p>
-                  <div className="mt-4 space-y-2">
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-3 text-sm text-slate-300">
-                      <div className="flex items-center justify-between gap-3">
-                        <span>Top 5 concentration</span>
-                        <strong>{formatPercent(metrics.top5ConcentrationPercent)}</strong>
+
+                  <div className="min-h-[260px] rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+                    <div className="mb-4 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Market shock</p>
+                        <h3 className="mt-2 text-lg font-semibold text-white">Risk outlook</h3>
                       </div>
+                      <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Guidance</div>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-3 text-sm text-slate-300">
-                      <div className="flex items-center justify-between gap-3">
-                        <span>Hedge allocation</span>
-                        <strong>{formatPercent(metrics.hedgeAllocation)}</strong>
+                    <p className="text-sm leading-6 text-slate-400">This panel reflects current risk posture based on existing portfolio metrics. No additional scenario calculations are added.</p>
+                    <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                      <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                        <div className="flex items-center justify-between gap-3">
+                          <span>Top 5 concentration</span>
+                          <strong>{formatPercent(metrics.top5ConcentrationPercent)}</strong>
+                        </div>
                       </div>
-                    </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-3 text-sm text-slate-300">
-                      <div className="flex items-center justify-between gap-3">
-                        <span>{marketShock.length ? 'Trim candidates' : 'Stable posture'}</span>
-                        <strong>{marketShock.length ? marketShock.length : 'None'}</strong>
+                      <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                        <div className="flex items-center justify-between gap-3">
+                          <span>Hedge allocation</span>
+                          <strong>{formatPercent(metrics.hedgeAllocation)}</strong>
+                        </div>
+                      </div>
+                      <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                        <div className="flex items-center justify-between gap-3">
+                          <span>{marketShock.length ? 'Trim candidates' : 'Stable posture'}</span>
+                          <strong>{marketShock.length ? marketShock.length : 'None'}</strong>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1151,28 +1153,36 @@ function App() {
                     Total options value {formatCurrency(optionRows.reduce((sum, row) => sum + Math.abs(row.marketValue), 0))}
                   </div>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-slate-800 text-sm">
+                <div className="overflow-hidden">
+                  <table className="w-full table-fixed divide-y divide-slate-800 text-sm">
+                    <colgroup>
+                      <col className="w-[12%]" />
+                      <col className="w-[10%]" />
+                      <col className="w-[10%]" />
+                      <col className="w-[6%]" />
+                      <col className="w-[8%]" />
+                      <col className="w-[13%]" />
+                      <col className="w-[7%]" />
+                      <col className="w-[11%]" />
+                      <col className="w-[12%]" />
+                      <col className="w-[11%]" />
+                    </colgroup>
                     <thead className="bg-slate-950/70 text-slate-400">
                       <tr>
                         {[
                           ['Underlying', 'underlying'],
                           ['Full symbol', 'fullSymbol'],
                           ['Option Type', 'optionType'],
-                          ['Quantity', 'quantity'],
+                          ['QTY', 'quantity'],
                           ['Strike', 'strike'],
                           ['Expiration', 'expiration'],
                           ['DTE', 'dte'],
                           ['Current Price', 'currentPrice'],
                           ['Market Value', 'marketValue'],
                           ['Unrealized P/L', 'unrealizedPL'],
-                          ['Delta', 'delta'],
-                          ['Theta', 'theta'],
-                          ['Strategy Bucket', 'strategyBucket'],
-                          ['Notes', 'notes'],
                         ].map(([label, key]) => (
-                          <th key={key} className="px-4 py-3 text-left uppercase tracking-[0.2em] text-slate-400">
-                            <button type="button" onClick={() => handleOptionSort(key)} className="inline-flex items-center gap-2">
+                          <th key={key} className={`px-3 py-3 uppercase leading-tight tracking-[0.16em] text-slate-400 ${['quantity', 'strike', 'dte', 'currentPrice', 'marketValue', 'unrealizedPL'].includes(key) ? 'text-right' : 'text-left'}`}>
+                            <button type="button" onClick={() => handleOptionSort(key)} className={`inline-flex items-center gap-2 ${['quantity', 'strike', 'dte', 'currentPrice', 'marketValue', 'unrealizedPL'].includes(key) ? 'justify-end' : 'justify-start'} w-full`}>
                               {label}
                               <span>{optionSortArrow(key)}</span>
                             </button>
@@ -1186,25 +1196,21 @@ function App() {
                         const rowStyle = dte === null ? 'bg-slate-950/80' : dte <= 7 ? 'bg-rose-500/10' : dte <= 14 ? 'bg-amber-500/10' : dte <= 30 ? 'bg-slate-600/10' : 'bg-transparent'
                         return (
                           <tr key={position.id} className={`${rowStyle} hover:bg-slate-900/80 transition-colors duration-150`}>
-                            <td className="px-4 py-3 text-slate-100">{position.underlyingTicker || position.ticker}</td>
-                            <td className="px-4 py-3 text-slate-300">{position.fullSymbol || position.description}</td>
-                            <td className="px-4 py-3 text-slate-300">{position.optionType}</td>
-                            <td className="px-4 py-3 text-slate-100">{formatQuantity(position.quantity)}</td>
-                            <td className="px-4 py-3 text-slate-100">{position.strike}</td>
-                            <td className="px-4 py-3 text-slate-100">{position.expiration || 'N/A'}</td>
-                            <td className="px-4 py-3 text-slate-100">{dte === null ? 'N/A' : `${dte}d`}</td>
-                            <td className="px-4 py-3 text-slate-100">{formatCurrency(position.currentPrice)}</td>
-                            <td className="px-4 py-3 text-slate-100">{formatCurrency(position.marketValue)}</td>
-                            <td className={`px-4 py-3 ${position.unrealizedPL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{formatCurrency(position.unrealizedPL)}</td>
-                            <td className="px-4 py-3 text-slate-100">{position.delta}</td>
-                            <td className="px-4 py-3 text-slate-100">{position.theta}</td>
-                            <td className="px-4 py-3 text-slate-100">{position.strategyBucket}</td>
-                            <td className="px-4 py-3 text-slate-300">{position.notes}</td>
+                            <td className="truncate px-3 py-3 text-slate-100">{position.underlyingTicker || position.ticker}</td>
+                            <td className="truncate px-3 py-3 text-slate-300">{position.fullSymbol || position.description}</td>
+                            <td className="truncate px-3 py-3 text-slate-300">{position.optionType}</td>
+                            <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatQuantity(position.quantity)}</td>
+                            <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{position.strike}</td>
+                            <td className="whitespace-nowrap px-3 py-3 text-slate-100">{position.expiration || 'N/A'}</td>
+                            <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{dte === null ? 'N/A' : `${dte}d`}</td>
+                            <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.currentPrice)}</td>
+                            <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
+                            <td className={`whitespace-nowrap px-3 py-3 text-right ${position.unrealizedPL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{formatCurrency(position.unrealizedPL)}</td>
                           </tr>
                         )
                       }) : (
                         <tr>
-                          <td colSpan={14} className="px-4 py-12 text-center text-slate-400">
+                          <td colSpan={10} className="px-4 py-12 text-center text-slate-400">
                             No option positions available. Load sample portfolio or import your CSV data.
                           </td>
                         </tr>
@@ -1229,10 +1235,6 @@ function App() {
                   <label className="block">
                     <span className="text-sm text-slate-400">Ticker</span>
                     <input type="text" value={watchlistForm.ticker} onChange={(e) => setWatchlistForm((current) => ({ ...current, ticker: e.target.value }))} className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
-                  </label>
-                  <label className="block">
-                    <span className="text-sm text-slate-400">Company name</span>
-                    <input type="text" value={watchlistForm.companyName} onChange={(e) => setWatchlistForm((current) => ({ ...current, companyName: e.target.value }))} className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
                   </label>
                   <label className="block">
                     <span className="text-sm text-slate-400">Current price</span>
@@ -1272,32 +1274,41 @@ function App() {
               </div>
 
               <div className="overflow-hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/80 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                <table className="min-w-full divide-y divide-slate-800 text-sm">
+                <table className="w-full table-fixed divide-y divide-slate-800 text-sm">
+                  <colgroup>
+                    <col className="w-[11%]" />
+                    <col className="w-[11%]" />
+                    <col className="w-[13%]" />
+                    <col className="w-[13%]" />
+                    <col className="w-[10%]" />
+                    <col className="w-[12%]" />
+                    <col className="w-[20%]" />
+                    <col className="w-[10%]" />
+                  </colgroup>
                   <thead className="bg-slate-950/70 text-slate-400">
                     <tr>
-                      {['Ticker', 'Company', 'Price', 'Buy Zone', 'Strong Buy', 'Target %', 'Bucket', 'Notes', 'Actions'].map((label) => (
-                        <th key={label} className="px-4 py-3 text-left uppercase tracking-[0.2em] text-slate-400">{label}</th>
+                      {['Ticker', 'Price', 'Buy Zone', 'Strong Buy', 'Target %', 'Bucket', 'Notes', 'Actions'].map((label) => (
+                        <th key={label} className="px-3 py-3 text-left uppercase tracking-[0.16em] text-slate-400">{label}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {watchlist.length ? watchlist.map((item) => (
                       <tr key={item.id} className="hover:bg-slate-900/80 transition-colors duration-150">
-                        <td className="px-4 py-3 text-slate-100">{item.ticker}</td>
-                        <td className="px-4 py-3 text-slate-300"><input type="text" value={item.companyName} onChange={(e) => handleWatchlistChange(item.id, 'companyName', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
-                        <td className="px-4 py-3"><input type="number" value={item.currentPrice} onChange={(e) => handleWatchlistChange(item.id, 'currentPrice', Number(e.target.value))} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
-                        <td className="px-4 py-3"><input type="text" value={item.buyZone} onChange={(e) => handleWatchlistChange(item.id, 'buyZone', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
-                        <td className="px-4 py-3"><input type="text" value={item.strongBuyZone} onChange={(e) => handleWatchlistChange(item.id, 'strongBuyZone', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
-                        <td className="px-4 py-3"><input type="number" value={item.targetPositionPercent} onChange={(e) => handleWatchlistChange(item.id, 'targetPositionPercent', Number(e.target.value))} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
-                        <td className="px-4 py-3"><select value={item.strategyBucket} onChange={(e) => handleWatchlistChange(item.id, 'strategyBucket', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5">{strategyBuckets.slice(1).map((value) => <option key={value} value={value}>{value}</option>)}</select></td>
-                        <td className="px-4 py-3 text-slate-300"><input type="text" value={item.notes} onChange={(e) => handleWatchlistChange(item.id, 'notes', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 py-3 text-slate-100">{item.ticker}</td>
+                        <td className="px-3 py-3"><input type="number" value={item.currentPrice} onChange={(e) => handleWatchlistChange(item.id, 'currentPrice', Number(e.target.value))} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
+                        <td className="px-3 py-3"><input type="text" value={item.buyZone} onChange={(e) => handleWatchlistChange(item.id, 'buyZone', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
+                        <td className="px-3 py-3"><input type="text" value={item.strongBuyZone} onChange={(e) => handleWatchlistChange(item.id, 'strongBuyZone', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
+                        <td className="px-3 py-3"><input type="number" value={item.targetPositionPercent} onChange={(e) => handleWatchlistChange(item.id, 'targetPositionPercent', Number(e.target.value))} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
+                        <td className="px-3 py-3"><select value={item.strategyBucket} onChange={(e) => handleWatchlistChange(item.id, 'strategyBucket', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5">{strategyBuckets.slice(1).map((value) => <option key={value} value={value}>{value}</option>)}</select></td>
+                        <td className="px-3 py-3 text-slate-300"><input type="text" value={item.notes} onChange={(e) => handleWatchlistChange(item.id, 'notes', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
+                        <td className="px-3 py-3">
                           <button type="button" onClick={() => removeWatchlistItem(item.id)} className="rounded-3xl bg-rose-500/10 px-3 py-2 text-sm text-rose-200 ring-1 ring-rose-400/10 transition hover:bg-rose-500/15">Delete</button>
                         </td>
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan={9} className="px-4 py-12 text-center text-slate-400">
+                        <td colSpan={8} className="px-4 py-12 text-center text-slate-400">
                           Add a watchlist row to save manual ticker ideas locally.
                         </td>
                       </tr>
