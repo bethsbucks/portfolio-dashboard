@@ -1090,142 +1090,160 @@ function App() {
 
           {activeTab === 'Positions' && (
             <section className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-[1fr_auto]">
-                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                  <div className="mb-4 flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Positions</p>
-                      <h2 className="mt-2 text-2xl font-semibold text-white">Portfolio table</h2>
-                    </div>
+              <div className="overview-lower-card overview-lower-card-cyan rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Positions</p>
+                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Portfolio filters</h2>
+                    <p className="mt-2 max-w-2xl text-sm text-slate-400">Search and filter imported holdings without changing the saved portfolio data.</p>
                   </div>
+                  <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-cyan-100">
+                    {sortedPositions.length} of {positions.length} row{positions.length === 1 ? '' : 's'}
+                  </div>
+                </div>
+
+                <div className="rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55 p-4">
                   <div className="grid gap-3 sm:grid-cols-3">
-                    <label className="block">
-                      <span className="field-label text-sm text-slate-400">Search</span>
-                      <div className="control-shell mt-2 flex items-center rounded-3xl border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200 shadow-sm ring-1 ring-slate-800/40">
-                        <Search className="mr-2 h-4 w-4 text-slate-400" />
-                        <input
-                          type="search"
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          placeholder="Ticker, description, notes"
-                          className="w-full bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-500"
-                        />
-                      </div>
-                    </label>
-                    <label className="block">
-                      <span className="field-label text-sm text-slate-400">Asset type</span>
-                      <select value={assetFilter} onChange={(e) => setAssetFilter(e.target.value)} className="control-shell mt-2 block w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40">
-                        {assetTypes.map((type) => (
-                          <option key={type} value={type}>{type}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="block">
-                      <span className="field-label text-sm text-slate-400">Strategy bucket</span>
-                      <select value={strategyFilter} onChange={(e) => setStrategyFilter(e.target.value)} className="control-shell mt-2 block w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40">
-                        {strategyBuckets.map((bucket) => (
-                          <option key={bucket} value={bucket}>{bucket}</option>
-                        ))}
-                      </select>
-                    </label>
+                  <label className="block">
+                    <span className="field-label text-sm text-slate-400">Search</span>
+                    <div className="control-shell mt-2 flex items-center rounded-3xl border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200 shadow-sm ring-1 ring-slate-800/40">
+                      <Search className="mr-2 h-4 w-4 text-slate-400" />
+                      <input
+                        type="search"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Ticker, description, notes"
+                        className="w-full bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                  </label>
+                  <label className="block">
+                    <span className="field-label text-sm text-slate-400">Asset type</span>
+                    <select value={assetFilter} onChange={(e) => setAssetFilter(e.target.value)} className="control-shell mt-2 block w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40">
+                      {assetTypes.map((type) => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="field-label text-sm text-slate-400">Strategy bucket</span>
+                    <select value={strategyFilter} onChange={(e) => setStrategyFilter(e.target.value)} className="control-shell mt-2 block w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40">
+                      {strategyBuckets.map((bucket) => (
+                        <option key={bucket} value={bucket}>{bucket}</option>
+                      ))}
+                    </select>
+                  </label>
                   </div>
                 </div>
               </div>
 
-              <div className="data-panel data-table-panel overflow-hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/80 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60 backdrop-blur-xl">
-                <table className="data-table positions-table w-full table-fixed divide-y divide-slate-800 text-[12px]">
-                  <colgroup>
-                    <col className="w-[8%]" />
-                    <col className="w-[20%]" />
-                    <col className="w-[7%]" />
-                    <col className="w-[7%]" />
-                    <col className="w-[6%]" />
-                    <col className="w-[8%]" />
-                    <col className="w-[9%]" />
-                    <col className="w-[10%]" />
-                    <col className="w-[10%]" />
-                    <col className="w-[15%]" />
-                  </colgroup>
-                  <thead className="bg-slate-950/70 text-slate-400">
-                    <tr>
-                      {['Ticker', 'Description', 'Asset Type', 'Strategy Bucket', 'Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %'].map((label) => {
-                        const sortKey = label.replace(/\s+/g, '').charAt(0).toLowerCase() + label.replace(/\s+/g, '').slice(1)
-                        const isNumericHeader = ['Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %'].includes(label)
+              <div className="overview-lower-card overview-lower-card-violet rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Holdings ledger</p>
+                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Portfolio table</h2>
+                  </div>
+                  <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-violet-100">
+                    {formatCurrency(metrics.totalMarketValue)} total
+                  </div>
+                </div>
 
-                        return (
-                          <th key={label} className={`px-2 py-3 align-middle text-[9px] font-semibold uppercase leading-none tracking-[0.08em] text-slate-400 ${isNumericHeader ? 'text-right' : 'text-left'}`}>
-                            <button type="button" onClick={() => handleSort(sortKey)} className={`inline-flex min-h-7 items-center gap-1 whitespace-nowrap leading-none ${isNumericHeader ? 'w-full justify-end' : 'justify-start'}`}>
-                              {label}
-                              <span>{sortArrow(sortKey)}</span>
-                            </button>
-                          </th>
-                        )
-                      })}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800">
-                    {sortedPositions.length ? sortedPositions.map((position) => {
-                      return (
-                        <tr key={position.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
-                          <td className="px-2 py-3 text-slate-100">
-                            {position.assetType === 'Option' && position.fullSymbol ? (
-                              <div className="space-y-1">
-                                <span className="ticker-chip">{position.underlyingTicker || position.ticker}</span>
-                                <div className="text-xs text-slate-500">{position.fullSymbol}</div>
-                              </div>
-                            ) : (
-                              <span className="ticker-chip">{position.ticker}</span>
-                            )}
-                          </td>
-                          <td className="truncate px-2 py-3 text-[12px] font-semibold text-slate-200">{position.description}</td>
-                          <td className="px-2 py-3">
-                            <select value={position.assetType} onChange={(e) => handlePositionChange(position.id, 'assetType', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-1.5 py-2 text-[10px] text-slate-100 outline-none ring-1 ring-slate-800/40">
-                              {assetTypes.slice(1).map((value) => (
-                                <option key={value} value={value}>{value}</option>
-                              ))}
-                            </select>
-                          </td>
-                          <td className="px-2 py-3">
-                            <select value={position.strategyBucket} onChange={(e) => handlePositionChange(position.id, 'strategyBucket', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-1.5 py-2 text-[10px] text-slate-100 outline-none ring-1 ring-slate-800/40">
-                              {strategyBuckets.slice(1).map((value) => (
-                                <option key={value} value={value}>{value}</option>
-                              ))}
-                            </select>
-                          </td>
-                          <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatQuantity(position.quantity)}</td>
-                          <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatCurrency(position.avgCost)}</td>
-                          <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatCurrency(position.currentPrice)}</td>
-                          <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
-                          <td className={`whitespace-nowrap px-2 py-3 text-right ${position.unrealizedPL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{formatCurrency(position.unrealizedPL)}</td>
-                          <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatPercent(position.portfolioWeightPercent)}</td>
-                        </tr>
-                      )
-                    }) : (
+                <div className="data-table-panel overflow-hidden rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55">
+                  <table className="data-table positions-table w-full table-fixed divide-y divide-slate-800 text-[12px]">
+                    <colgroup>
+                      <col className="w-[8%]" />
+                      <col className="w-[20%]" />
+                      <col className="w-[7%]" />
+                      <col className="w-[7%]" />
+                      <col className="w-[6%]" />
+                      <col className="w-[8%]" />
+                      <col className="w-[9%]" />
+                      <col className="w-[10%]" />
+                      <col className="w-[10%]" />
+                      <col className="w-[15%]" />
+                    </colgroup>
+                    <thead className="bg-slate-950/70 text-slate-400">
                       <tr>
-                        <td colSpan={10} className="px-4 py-12 text-center text-slate-400">
-                          No positions found. Upload a CSV or load sample data to begin.
-                        </td>
+                        {['Ticker', 'Description', 'Asset Type', 'Strategy Bucket', 'Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %'].map((label) => {
+                          const sortKey = label.replace(/\s+/g, '').charAt(0).toLowerCase() + label.replace(/\s+/g, '').slice(1)
+                          const isNumericHeader = ['Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %'].includes(label)
+
+                          return (
+                            <th key={label} className={`px-2 py-3 align-middle text-[9px] font-semibold uppercase leading-none tracking-[0.08em] text-slate-400 ${isNumericHeader ? 'text-right' : 'text-left'}`}>
+                              <button type="button" onClick={() => handleSort(sortKey)} className={`inline-flex min-h-7 items-center gap-1 whitespace-nowrap leading-none ${isNumericHeader ? 'w-full justify-end' : 'justify-start'}`}>
+                                {label}
+                                <span>{sortArrow(sortKey)}</span>
+                              </button>
+                            </th>
+                          )
+                        })}
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800">
+                      {sortedPositions.length ? sortedPositions.map((position) => {
+                        return (
+                          <tr key={position.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
+                            <td className="px-2 py-3 text-slate-100">
+                              {position.assetType === 'Option' && position.fullSymbol ? (
+                                <div className="space-y-1">
+                                  <span className="ticker-chip">{position.underlyingTicker || position.ticker}</span>
+                                  <div className="text-xs text-slate-500">{position.fullSymbol}</div>
+                                </div>
+                              ) : (
+                                <span className="ticker-chip">{position.ticker}</span>
+                              )}
+                            </td>
+                            <td className="truncate px-2 py-3 text-[12px] font-semibold text-slate-200">{position.description}</td>
+                            <td className="px-2 py-3">
+                              <select value={position.assetType} onChange={(e) => handlePositionChange(position.id, 'assetType', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-1.5 py-2 text-[10px] text-slate-100 outline-none ring-1 ring-slate-800/40">
+                                {assetTypes.slice(1).map((value) => (
+                                  <option key={value} value={value}>{value}</option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="px-2 py-3">
+                              <select value={position.strategyBucket} onChange={(e) => handlePositionChange(position.id, 'strategyBucket', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-1.5 py-2 text-[10px] text-slate-100 outline-none ring-1 ring-slate-800/40">
+                                {strategyBuckets.slice(1).map((value) => (
+                                  <option key={value} value={value}>{value}</option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatQuantity(position.quantity)}</td>
+                            <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatCurrency(position.avgCost)}</td>
+                            <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatCurrency(position.currentPrice)}</td>
+                            <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
+                            <td className={`whitespace-nowrap px-2 py-3 text-right ${position.unrealizedPL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{formatCurrency(position.unrealizedPL)}</td>
+                            <td className="whitespace-nowrap px-2 py-3 text-right text-slate-100">{formatPercent(position.portfolioWeightPercent)}</td>
+                          </tr>
+                        )
+                      }) : (
+                        <tr>
+                          <td colSpan={10} className="px-4 py-12 text-center text-slate-400">
+                            No positions found. Upload a CSV or load sample data to begin.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </section>
           )}
 
           {activeTab === 'Options' && (
             <section className="space-y-6">
-              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60 backdrop-blur-xl">
-                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div className="overview-lower-card overview-lower-card-violet rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Options</p>
-                    <h2 className="mt-2 text-2xl font-semibold text-white">Option exposure</h2>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Options</p>
+                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Option exposure</h2>
+                    <p className="mt-2 max-w-2xl text-sm text-slate-400">Review option positions, expiration dates, DTE, market value, and unrealized P/L.</p>
                   </div>
-                  <div className="control-shell rounded-3xl bg-slate-950/70 px-4 py-3 text-sm text-slate-300 ring-1 ring-white/10">
-                    Total options value {formatCurrency(optionRows.reduce((sum, row) => sum + Math.abs(row.marketValue), 0))}
+                  <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-violet-100">
+                    {optionRows.length} option row{optionRows.length === 1 ? '' : 's'} / {formatCurrency(optionRows.reduce((sum, row) => sum + Math.abs(row.marketValue), 0))}
                   </div>
                 </div>
-                <div className="data-table-panel overflow-hidden">
+                <div className="data-table-panel overflow-hidden rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55">
                   <table className="data-table w-full table-fixed divide-y divide-slate-800 text-sm">
                     <colgroup>
                       <col className="w-[12%]" />
@@ -1562,8 +1580,8 @@ function App() {
                 <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Target planner</p>
-                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Stock and ETF targets</h2>
-                    <p className="mt-1 text-sm text-slate-400">Set target percentages on grouped stocks and ETFs. Options are tracked separately on the Options page and short put exposure card.</p>
+                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Stock targets</h2>
+                    <p className="mt-1 text-sm text-slate-400">Set target percentages on grouped stock positions. Options are tracked separately on the Options page and short put exposure card.</p>
                   </div>
                   <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-amber-100">
                     {reviewPositionCount} review item{reviewPositionCount === 1 ? '' : 's'} / {filteredTrimmedPositions.length} target row{filteredTrimmedPositions.length === 1 ? '' : 's'}
@@ -1623,7 +1641,7 @@ function App() {
                         </tr>
                       )) : (
                         <tr>
-                          <td colSpan={10} className="px-3 py-12 text-center text-slate-400">No stock or ETF positions are available for target planning.</td>
+                          <td colSpan={10} className="px-3 py-12 text-center text-slate-400">No stock positions are available for target planning.</td>
                         </tr>
                       )}
                     </tbody>
@@ -1778,10 +1796,19 @@ function App() {
           {activeTab === 'Settings' && (
             <section className="space-y-6">
               <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Risk thresholds</p>
-                  <h2 className="mt-3 text-2xl font-semibold text-white">Configure limits</h2>
-                  <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <div className="overview-lower-card overview-lower-card-amber rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                  <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Risk thresholds</p>
+                      <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Configure limits</h2>
+                      <p className="mt-2 max-w-2xl text-sm text-slate-400">Tune warning levels used across the dashboard and trade plan.</p>
+                    </div>
+                    <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-amber-100">
+                      {Object.keys(settings).length} active threshold{Object.keys(settings).length === 1 ? '' : 's'}
+                    </div>
+                  </div>
+                  <div className="rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55 p-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
                     {[
                       { key: 'maxSinglePositionPercent', label: 'Max single position %' },
                       { key: 'maxTop5ConcentrationPercent', label: 'Max top 5 concentration %' },
@@ -1797,11 +1824,20 @@ function App() {
                       </label>
                     ))}
                   </div>
+                  </div>
                 </div>
 
-                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Data tools</p>
-                  <h2 className="mt-3 text-2xl font-semibold text-white">Import, export, reset</h2>
+                <div className="overview-lower-card overview-lower-card-cyan rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                  <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Data tools</p>
+                      <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Import, export, reset</h2>
+                      <p className="mt-2 max-w-2xl text-sm text-slate-400">Manage the local CSV import, JSON backup, and demo data tools.</p>
+                    </div>
+                    <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-cyan-100">
+                      Local storage
+                    </div>
+                  </div>
                   <div className="mt-6 space-y-4">
                     <div className="signal-strip rounded-3xl p-4">
                       <p className="text-sm text-slate-300">CSV portfolio import</p>
@@ -1837,44 +1873,46 @@ function App() {
                 </div>
               </div>
 
-              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="overview-lower-card overview-lower-card-violet rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Import summary</p>
-                    <h3 className="mt-2 text-xl font-semibold text-white">Data status</h3>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Import summary</p>
+                    <h3 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Data status</h3>
+                    <p className="mt-2 max-w-2xl text-sm text-slate-400">Current local portfolio snapshot and saved threshold count.</p>
                   </div>
-                  <div className="control-shell rounded-3xl bg-slate-950/70 px-4 py-3 text-sm text-slate-300 ring-1 ring-white/10">
+                  <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-violet-100">
                     Last import {lastImportLabel}
                   </div>
                 </div>
-                <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                  <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4 text-sm text-slate-300" style={{ '--tile-color': '#22d3ee' }}>
                     <p className="text-slate-400">Imported positions</p>
                     <p className="mt-3 text-2xl font-semibold text-white">{metrics.positionsCount}</p>
                   </div>
-                  <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
+                  <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4 text-sm text-slate-300" style={{ '--tile-color': '#22c55e' }}>
                     <p className="text-slate-400">Total market value</p>
                     <p className="mt-3 text-2xl font-semibold text-white">{formatCurrency(metrics.totalMarketValue)}</p>
                   </div>
-                  <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
-                    <p className="text-slate-400">Risk threshold set</p>
+                  <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4 text-sm text-slate-300" style={{ '--tile-color': '#f59e0b' }}>
+                    <p className="text-slate-400">Risk thresholds set</p>
                     <p className="mt-3 text-2xl font-semibold text-white">{Object.keys(settings).length}</p>
                   </div>
                 </div>
               </div>
 
               {csvDiagnostics && (
-                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="overview-lower-card overview-lower-card-cyan rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                  <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Import diagnostics</p>
-                      <h3 className="mt-2 text-xl font-semibold text-white">CSV parser results</h3>
+                      <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Import diagnostics</p>
+                      <h3 className="overview-panel-title mt-2 text-2xl font-semibold text-white">CSV parser results</h3>
+                      <p className="mt-2 max-w-2xl text-sm text-slate-400">Parser totals, mapped fields, and any skipped rows from the latest import.</p>
                     </div>
                     <button type="button" onClick={handleDownloadDiagnostics} className="action-button gap-2 px-4 py-3 text-sm">
                       <Download className="h-4 w-4" /> Download diagnostics JSON
                     </button>
                   </div>
-                  <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">File name</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.fileName || 'unknown'}</p>
