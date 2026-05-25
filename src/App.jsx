@@ -893,13 +893,13 @@ function App() {
                   </div>
                 </div>
 
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl overflow-hidden">
+                <div className="overview-side-card overview-side-card-cyan rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl overflow-hidden">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Top 10 positions</p>
-                      <h3 className="mt-2 text-lg font-semibold text-white">Value leaders</h3>
+                      <p className="overview-panel-kicker text-xs uppercase tracking-[0.3em] text-slate-400">Top 10 positions</p>
+                      <h3 className="overview-panel-title mt-2 text-lg font-semibold text-white">Value leaders</h3>
                     </div>
-                    <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Compact view</div>
+                    <div className="overview-pill rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Compact view</div>
                   </div>
                   <div className="data-table-panel overflow-hidden">
                     <table className="data-table w-full table-fixed divide-y divide-slate-800 text-sm">
@@ -916,9 +916,14 @@ function App() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-800">
-                        {top10Overview.map((position) => (
-                          <tr key={position.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
-                            <td className="px-2 py-2 text-slate-100 font-medium"><span className="ticker-chip">{position.ticker}</span></td>
+                        {top10Overview.map((position, index) => (
+                          <tr key={position.id} className="leader-row data-row hover:bg-slate-900/80 transition-colors duration-150">
+                            <td className="px-2 py-2 text-slate-100 font-medium">
+                              <span className="leader-ticker">
+                                <span className="leader-rank">{index + 1}</span>
+                                <span className="ticker-chip">{position.ticker}</span>
+                              </span>
+                            </td>
                             <td className="px-2 py-2 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
                             <td className="px-2 py-2 text-right text-slate-100">{formatPercent(position.portfolioWeightPercent)}</td>
                           </tr>
@@ -928,13 +933,15 @@ function App() {
                   </div>
                 </div>
 
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+                <div className="overview-side-card overview-side-card-violet rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Portfolio diagnostics</p>
-                      <h3 className="mt-2 text-lg font-semibold text-white">Health overview</h3>
+                      <p className="overview-panel-kicker text-xs uppercase tracking-[0.3em] text-slate-400">Portfolio diagnostics</p>
+                      <h3 className="overview-panel-title mt-2 text-lg font-semibold text-white">Health overview</h3>
                     </div>
-                    <BarChart3 className="h-5 w-5 text-slate-300" />
+                    <div className="overview-icon-badge">
+                      <BarChart3 className="h-5 w-5 text-slate-100" />
+                    </div>
                   </div>
                   <div className="grid gap-2 sm:grid-cols-2">
                     {[
@@ -948,12 +955,20 @@ function App() {
                       { label: 'Net value', value: formatCurrency(metrics.totalMarketValue) },
                       { label: 'Unrealized P/L', value: formatCurrency(metrics.unrealizedPL) },
                       { label: 'Cash %', value: formatPercent(cashPercent) },
-                    ].map((item) => (
-                      <div key={item.label} className="signal-strip rounded-3xl p-3 text-sm text-slate-300">
+                    ].map((item) => {
+                      const tileColor = item.label.includes('Cash')
+                        ? '#22c55e'
+                        : item.label.includes('Short put')
+                          ? '#f59e0b'
+                          : item.label.includes('Unrealized')
+                            ? metrics.unrealizedPL >= 0 ? '#22c55e' : '#fb7185'
+                            : '#22d3ee'
+                      return (
+                      <div key={item.label} className="diagnostic-tile signal-strip rounded-3xl p-3 text-sm text-slate-300" style={{ '--tile-color': tileColor }}>
                         <p className="text-[11px] uppercase tracking-[0.24em] text-slate-500">{item.label}</p>
                         <p className={`mt-1 text-base font-semibold ${item.label === 'Short put exposure' ? 'text-amber-300' : 'text-white'}`}>{item.value}</p>
                       </div>
-                    ))}
+                    )})}
                   </div>
                 </div>
               </div>
