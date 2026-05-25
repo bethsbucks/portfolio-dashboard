@@ -98,6 +98,48 @@ const getGroupDescription = (group, underlying) => {
   return `${callCount} call position${callCount === 1 ? '' : 's'}`
 }
 
+const getImportMergeKey = (position) => {
+  const fullSymbol = String(position.fullSymbol || '').trim().toUpperCase()
+  if (fullSymbol) return `symbol:${fullSymbol}`
+
+  const ticker = String(position.underlyingTicker || position.ticker || '').trim().toUpperCase()
+  const expiration = String(position.expiration || '').trim()
+  const strike = String(position.strike || '').trim()
+  const optionType = String(position.optionType || '').trim().toUpperCase()
+
+  if (ticker && (expiration || strike || optionType)) {
+    return `option:${ticker}:${expiration}:${strike}:${optionType}`
+  }
+
+  if (ticker) return `ticker:${ticker}`
+
+  const description = String(position.description || '').trim().toUpperCase()
+  return description ? `description:${description}` : ''
+}
+
+const mergeImportedPositions = (incomingPositions, existingPositions) => {
+  const existingByKey = new Map()
+
+  existingPositions.forEach((position) => {
+    const key = getImportMergeKey(position)
+    if (key && !existingByKey.has(key)) {
+      existingByKey.set(key, position)
+    }
+  })
+
+  return incomingPositions.map((position) => {
+    const existing = existingByKey.get(getImportMergeKey(position))
+    if (!existing) return position
+
+    return {
+      ...position,
+      strategyBucket: existing.strategyBucket || position.strategyBucket,
+      targetWeightPercent: existing.targetWeightPercent || position.targetWeightPercent,
+      notes: existing.notes || position.notes,
+    }
+  })
+}
+
 const getDteBadgeClass = (dte) => {
   if (dte === null) return 'is-muted'
   if (dte <= 14) return 'is-danger'
@@ -206,9 +248,11 @@ function App() {
     }
     try {
       const { positions: parsedRows, diagnostics } = await parseCsvWithDiagnostics(file)
-      setPositions(normalizePositions(parsedRows))
+      const importedPositions = normalizePositions(parsedRows)
+      const mergedPositions = mergeImportedPositions(importedPositions, positions)
+      setPositions(mergedPositions)
       setImportTimestamp(new Date().toISOString())
-      setCsvMessage(`Imported ${parsedRows.length} rows from CSV`)
+      setCsvMessage(`Imported ${parsedRows.length} rows from CSV and preserved matching strategy buckets`)
       setCsvDiagnostics(diagnostics)
       event.target.value = ''
     } catch (error) {
@@ -1164,9 +1208,19 @@ function App() {
                     </colgroup>
                     <thead className="bg-slate-950/70 text-slate-400">
                       <tr>
-                        {['Ticker', 'Description', 'Asset Type', 'Strategy Bucket', 'Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %'].map((label) => {
-                          const sortKey = label.replace(/\s+/g, '').charAt(0).toLowerCase() + label.replace(/\s+/g, '').slice(1)
-                          const isNumericHeader = ['Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %'].includes(label)
+                        {[
+                          ['Ticker', 'ticker'],
+                          ['Description', 'description'],
+                          ['Asset Type', 'assetType'],
+                          ['Strategy Bucket', 'strategyBucket'],
+                          ['Quantity', 'quantity'],
+                          ['Avg Cost', 'avgCost'],
+                          ['Current Price', 'currentPrice'],
+                          ['Market Value', 'marketValue'],
+                          ['Unrealized P/L', 'unrealizedPL'],
+                          ['Portfolio %', 'portfolioWeightPercent'],
+                        ].map(([label, sortKey]) => {
+                          const isNumericHeader = ['quantity', 'avgCost', 'currentPrice', 'marketValue', 'unrealizedPL', 'portfolioWeightPercent'].includes(sortKey)
 
                           return (
                             <th key={label} className={`px-2 py-3 align-middle text-[9px] font-semibold uppercase leading-none tracking-[0.08em] text-slate-400 ${isNumericHeader ? 'text-right' : 'text-left'}`}>
