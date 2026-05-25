@@ -804,19 +804,19 @@ function App() {
               </div>
 
               <div className="grid gap-3 xl:grid-cols-[1.3fr_1fr_0.9fr]">
-                <div className="flex h-full flex-col rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+                <div className="allocation-card flex h-full flex-col rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Allocation by strategy</p>
-                      <h3 className="mt-2 text-lg font-semibold text-white">Strategy mix</h3>
+                      <p className="allocation-kicker text-xs uppercase tracking-[0.3em] text-slate-400">Allocation by strategy</p>
+                      <h3 className="allocation-title mt-1 text-2xl font-black uppercase text-white">Strategy mix</h3>
                     </div>
-                    <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Live snapshot</div>
+                    <div className="live-pill rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Live snapshot</div>
                   </div>
-                  <div className="sm:grid sm:grid-cols-[0.95fr_1.05fr] gap-4 items-center">
-                    <div className="relative h-56 flex items-center justify-center">
+                  <div className="allocation-body sm:grid sm:grid-cols-[0.95fr_1.05fr] gap-4 items-center">
+                    <div className="allocation-donut-shell relative h-60 flex items-center justify-center">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Pie data={metrics.allocationByStrategy.filter((slice) => slice.value > 0)} dataKey="value" nameKey="name" innerRadius={56} outerRadius={91} paddingAngle={4} stroke="#0f172a" strokeWidth={3}>
+                          <Pie data={metrics.allocationByStrategy.filter((slice) => slice.value > 0)} dataKey="value" nameKey="name" innerRadius={58} outerRadius={98} paddingAngle={5} stroke="#020617" strokeWidth={4}>
                             {metrics.allocationByStrategy.filter((slice) => slice.value > 0).map((entry) => {
                               const fill = strategyColorMap[entry.name] || '#94a3b8'
                               return <Cell key={entry.name} fill={fill} />
@@ -841,16 +841,16 @@ function App() {
                           const fill = strategyColorMap[entry.name] || '#94a3b8'
                           const pct = metrics.absoluteTotalMarketValue ? (entry.value / metrics.absoluteTotalMarketValue) * 100 : 0
                           return (
-                            <div key={entry.name} className="rounded-2xl border border-white/5 bg-slate-950/35 px-3 py-2">
+                            <div key={entry.name} className="strategy-row rounded-2xl border border-white/5 bg-slate-950/35 px-3 py-2" style={{ '--strategy-color': fill }}>
                               <div className="flex items-center justify-between gap-3">
                                 <div className="flex min-w-0 items-center gap-2">
-                                  <span className="h-2.5 w-2.5 rounded-full shadow-[0_0_18px_currentColor]" style={{ background: fill, color: fill }} />
+                                  <span className="strategy-row-mark h-2.5 w-2.5 rounded-full shadow-[0_0_18px_currentColor]" style={{ background: fill, color: fill }} />
                                   <div className="truncate">
-                                    <div className="truncate text-sm font-semibold text-slate-100">{entry.name}</div>
+                                    <div className="strategy-row-name truncate text-sm font-semibold text-slate-100">{entry.name}</div>
                                     <div className="truncate text-xs text-slate-500">{formatCurrency(entry.value)}</div>
                                   </div>
                                 </div>
-                                <div className="text-sm font-semibold text-slate-100">{formatPercent(pct)}</div>
+                                <div className="strategy-row-percent text-sm font-semibold text-slate-100">{formatPercent(pct)}</div>
                               </div>
                               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800/80">
                                 <div className="h-full rounded-full" style={{ width: `${Math.min(100, pct)}%`, background: fill }} />
@@ -869,21 +869,21 @@ function App() {
                       const cashPct = metrics.totalMarketValue ? (Math.abs(metrics.cashValue) / Math.abs(metrics.totalMarketValue)) * 100 : 0
                       return (
                         <>
-                          <div className="rounded-2xl border border-cyan-400/10 bg-cyan-400/10 px-3 py-3">
+                          <div className="allocation-mini allocation-mini-cyan rounded-2xl border border-cyan-400/10 bg-cyan-400/10 px-3 py-3">
                             <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-200/70">Lead strategy</p>
                             <div className="mt-1 flex items-baseline justify-between gap-2">
                               <strong className="truncate text-sm text-white">{largest.name}</strong>
                               <span className="text-sm font-semibold text-cyan-100">{formatPercent(metrics.absoluteTotalMarketValue ? (largest.value / metrics.absoluteTotalMarketValue) * 100 : 0)}</span>
                             </div>
                           </div>
-                          <div className="rounded-2xl border border-emerald-400/10 bg-emerald-400/10 px-3 py-3">
+                          <div className="allocation-mini allocation-mini-emerald rounded-2xl border border-emerald-400/10 bg-emerald-400/10 px-3 py-3">
                             <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-200/70">Cash ready</p>
                             <div className="mt-1 flex items-baseline justify-between gap-2">
                               <strong className="text-sm text-white">{formatCurrency(metrics.cashValue)}</strong>
                               <span className="text-sm font-semibold text-emerald-100">{formatPercent(cashPct)}</span>
                             </div>
                           </div>
-                          <div className="rounded-2xl border border-violet-400/10 bg-violet-400/10 px-3 py-3">
+                          <div className="allocation-mini allocation-mini-violet rounded-2xl border border-violet-400/10 bg-violet-400/10 px-3 py-3">
                             <p className="text-[10px] uppercase tracking-[0.2em] text-violet-200/70">Options income</p>
                             <strong className="mt-1 block text-sm text-white">{formatPercent(metrics.incomeAllocation)}</strong>
                           </div>
