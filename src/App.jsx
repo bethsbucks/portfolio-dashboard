@@ -1288,57 +1288,75 @@ function App() {
 
           {activeTab === 'Watchlist' && (
             <section className="space-y-6">
-              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="overview-lower-card overview-lower-card-cyan rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Watchlist</p>
-                    <h2 className="mt-2 text-2xl font-semibold text-white">Manual watchlist</h2>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Watchlist</p>
+                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Manual watchlist</h2>
+                    <p className="mt-2 max-w-2xl text-sm text-slate-400">Add ticker ideas, buy zones, and target sizing for later review.</p>
+                  </div>
+                  <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-cyan-100">
+                    {watchlist.length} saved row{watchlist.length === 1 ? '' : 's'}
                   </div>
                 </div>
-                <div className="grid gap-3 lg:grid-cols-3">
-                  <label className="block">
-                    <span className="field-label text-sm text-slate-400">Ticker</span>
-                    <input type="text" value={watchlistForm.ticker} onChange={(e) => setWatchlistForm((current) => ({ ...current, ticker: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
-                  </label>
-                  <label className="block">
-                    <span className="field-label text-sm text-slate-400">Current price</span>
-                    <input type="number" value={watchlistForm.currentPrice} onChange={(e) => setWatchlistForm((current) => ({ ...current, currentPrice: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
-                  </label>
-                  <label className="block">
-                    <span className="field-label text-sm text-slate-400">Buy zone</span>
-                    <input type="text" value={watchlistForm.buyZone} onChange={(e) => setWatchlistForm((current) => ({ ...current, buyZone: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
-                  </label>
-                  <label className="block">
-                    <span className="field-label text-sm text-slate-400">Strong buy zone</span>
-                    <input type="text" value={watchlistForm.strongBuyZone} onChange={(e) => setWatchlistForm((current) => ({ ...current, strongBuyZone: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
-                  </label>
-                  <label className="block">
-                    <span className="field-label text-sm text-slate-400">Target %</span>
-                    <input type="number" value={watchlistForm.targetPositionPercent} onChange={(e) => setWatchlistForm((current) => ({ ...current, targetPositionPercent: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
-                  </label>
-                  <label className="block">
-                    <span className="field-label text-sm text-slate-400">Strategy bucket</span>
-                    <select value={watchlistForm.strategyBucket} onChange={(e) => setWatchlistForm((current) => ({ ...current, strategyBucket: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5">
-                      {strategyBuckets.slice(1).map((value) => (
-                        <option key={value} value={value}>{value}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="block lg:col-span-3">
-                    <span className="field-label text-sm text-slate-400">Notes</span>
-                    <input type="text" value={watchlistForm.notes} onChange={(e) => setWatchlistForm((current) => ({ ...current, notes: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
-                  </label>
-                </div>
-                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <button type="button" onClick={addWatchlistItem} className="action-button gap-2 px-5 py-3 text-sm">
-                    <Plus className="h-4 w-4" /> Add watchlist row
-                  </button>
-                  <p className="text-sm text-slate-400">Store watchlist entries locally for later review.</p>
+
+                <div className="rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55 p-4">
+                  <div className="grid gap-3 lg:grid-cols-3">
+                    <label className="block">
+                      <span className="field-label text-sm text-slate-400">Ticker</span>
+                      <input type="text" value={watchlistForm.ticker} onChange={(e) => setWatchlistForm((current) => ({ ...current, ticker: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    </label>
+                    <label className="block">
+                      <span className="field-label text-sm text-slate-400">Current price</span>
+                      <input type="number" value={watchlistForm.currentPrice} onChange={(e) => setWatchlistForm((current) => ({ ...current, currentPrice: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    </label>
+                    <label className="block">
+                      <span className="field-label text-sm text-slate-400">Buy zone</span>
+                      <input type="text" value={watchlistForm.buyZone} onChange={(e) => setWatchlistForm((current) => ({ ...current, buyZone: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    </label>
+                    <label className="block">
+                      <span className="field-label text-sm text-slate-400">Strong buy zone</span>
+                      <input type="text" value={watchlistForm.strongBuyZone} onChange={(e) => setWatchlistForm((current) => ({ ...current, strongBuyZone: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    </label>
+                    <label className="block">
+                      <span className="field-label text-sm text-slate-400">Target %</span>
+                      <input type="number" value={watchlistForm.targetPositionPercent} onChange={(e) => setWatchlistForm((current) => ({ ...current, targetPositionPercent: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    </label>
+                    <label className="block">
+                      <span className="field-label text-sm text-slate-400">Strategy bucket</span>
+                      <select value={watchlistForm.strategyBucket} onChange={(e) => setWatchlistForm((current) => ({ ...current, strategyBucket: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5">
+                        {strategyBuckets.slice(1).map((value) => (
+                          <option key={value} value={value}>{value}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="block lg:col-span-3">
+                      <span className="field-label text-sm text-slate-400">Notes</span>
+                      <input type="text" value={watchlistForm.notes} onChange={(e) => setWatchlistForm((current) => ({ ...current, notes: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    </label>
+                  </div>
+                  <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <button type="button" onClick={addWatchlistItem} className="action-button gap-2 px-5 py-3 text-sm">
+                      <Plus className="h-4 w-4" /> Add watchlist row
+                    </button>
+                    <p className="text-sm text-slate-400">Store watchlist entries locally for later review.</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="data-panel data-table-panel overflow-hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/80 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                <table className="data-table w-full table-fixed divide-y divide-slate-800 text-sm">
+              <div className="overview-lower-card overview-lower-card-violet rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Saved ideas</p>
+                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Watchlist rows</h2>
+                  </div>
+                  <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-violet-100">
+                    Local only
+                  </div>
+                </div>
+
+                <div className="data-table-panel overflow-hidden rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55">
+                  <table className="data-table w-full table-fixed divide-y divide-slate-800 text-sm">
                   <colgroup>
                     <col className="w-[11%]" />
                     <col className="w-[11%]" />
@@ -1378,7 +1396,8 @@ function App() {
                       </tr>
                     )}
                   </tbody>
-                </table>
+                  </table>
+                </div>
               </div>
 
               <div className="overview-lower-card overview-lower-card-amber rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
@@ -1456,10 +1475,11 @@ function App() {
           {activeTab === 'Trade Plan' && (
             <section className="space-y-6">
               <div className="grid gap-2 xl:grid-cols-[repeat(3,minmax(0,1fr))]">
-                <div className="data-panel rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-3 shadow-[0_8px_32px_-16px_rgba(15,23,42,0.6)] ring-1 ring-slate-800/40 col-span-full">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="overview-lower-card overview-lower-card-cyan rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-cyan-400/10 col-span-full">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Planning targets</p>
+                      <p className="overview-panel-kicker text-xs uppercase tracking-[0.3em] text-slate-400">Planning targets</p>
+                      <h2 className="overview-panel-title mt-2 text-xl font-semibold text-white">Trade plan controls</h2>
                       <p className="mt-1 text-sm text-slate-300">Set target percentages on positions or watchlist items to generate better trim/add suggestions.</p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -1470,9 +1490,9 @@ function App() {
                     </div>
                   </div>
                 </div>
-                <div className="plan-card metric-card-cyan rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Portfolio value</p>
-                  <h3 className="mt-2 text-3xl font-semibold text-white">{formatCurrency(metrics.totalMarketValue)}</h3>
+                <div className="overview-lower-card overview-lower-card-cyan rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
+                  <p className="overview-panel-kicker text-xs uppercase tracking-[0.3em] text-slate-400">Portfolio value</p>
+                  <h3 className="overview-panel-title mt-2 text-2xl font-semibold text-white">{formatCurrency(metrics.totalMarketValue)}</h3>
                   <div className="mt-3 space-y-2 text-sm text-slate-300">
                     <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Unrealized P/L</span>
@@ -1484,9 +1504,9 @@ function App() {
                     </div>
                   </div>
                 </div>
-                <div className="plan-card metric-card-emerald rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Cash available</p>
-                  <h3 className="mt-2 text-3xl font-semibold text-white">{formatCurrency(metrics.cashValue)}</h3>
+                <div className="overview-lower-card overview-lower-card-amber rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
+                  <p className="overview-panel-kicker text-xs uppercase tracking-[0.3em] text-slate-400">Cash available</p>
+                  <h3 className="overview-panel-title mt-2 text-2xl font-semibold text-white">{formatCurrency(metrics.cashValue)}</h3>
                   <p className="mt-1 text-sm text-slate-300">{formatPercent(cashPercent)} of portfolio</p>
                   <div className="mt-3 space-y-2 text-sm text-slate-300">
                     <div className="signal-strip flex items-center justify-between px-3 py-2">
@@ -1500,8 +1520,9 @@ function App() {
                     <p className={`text-sm font-semibold ${metrics.cashValue - shortPutAssignmentExposure >= 0 ? 'text-cyan-300' : 'text-rose-300'}`}>{metrics.cashValue - shortPutAssignmentExposure >= 0 ? 'Covered' : 'Cash shortfall'}</p>
                   </div>
                 </div>
-                <div className="plan-card metric-card-violet rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Plan indicators</p>
+                <div className="overview-lower-card overview-lower-card-violet rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
+                  <p className="overview-panel-kicker text-xs uppercase tracking-[0.3em] text-slate-400">Plan indicators</p>
+                  <h3 className="overview-panel-title mt-2 text-xl font-semibold text-white">Action scan</h3>
                   <div className="mt-3 space-y-2 text-sm text-slate-300">
                     <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Overweight positions</span>
@@ -1527,15 +1548,18 @@ function App() {
                 </div>
               </div>
 
-              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="overview-lower-card overview-lower-card-amber rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Trim Candidates</p>
-                    <h2 className="mt-2 text-2xl font-semibold text-white">Positions to review</h2>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Trim candidates</p>
+                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Positions to review</h2>
                     <p className="mt-1 text-sm text-slate-400">Trade Plan groups stocks and calls by ticker. Puts are excluded here and tracked separately in short put exposure.</p>
                   </div>
+                  <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-amber-100">
+                    {filteredTrimmedPositions.length} review item{filteredTrimmedPositions.length === 1 ? '' : 's'}
+                  </div>
                 </div>
-                <div className="data-table-panel overflow-hidden">
+                <div className="data-table-panel overflow-hidden rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55">
                   <table className="data-table w-full table-fixed divide-y divide-slate-800 text-[12px]">
                     <colgroup>
                       <col className="w-[8%]" />
@@ -1597,14 +1621,17 @@ function App() {
                 </div>
               </div>
 
-              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="overview-lower-card overview-lower-card-cyan rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Add Candidates</p>
-                    <h2 className="mt-2 text-2xl font-semibold text-white">Opportunities to add</h2>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Add candidates</p>
+                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Opportunities to add</h2>
+                  </div>
+                  <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-cyan-100">
+                    {filteredAddCandidates.length} candidate{filteredAddCandidates.length === 1 ? '' : 's'}
                   </div>
                 </div>
-                <div className="data-table-panel overflow-hidden">
+                <div className="data-table-panel overflow-hidden rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55">
                   <table className="data-table w-full table-fixed divide-y divide-slate-800 text-[12px]">
                     <colgroup>
                       <col className="w-[8%]" />
@@ -1625,7 +1652,7 @@ function App() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800">
-                      {addCandidates.length ? addCandidates.map((item) => (
+                      {filteredAddCandidates.length ? filteredAddCandidates.map((item) => (
                         <tr key={item.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
                           <td className="px-3 py-3 text-slate-100"><span className="ticker-chip">{item.ticker}</span></td>
                           <td className="truncate px-3 py-3 text-slate-300">{item.description}</td>
@@ -1648,20 +1675,20 @@ function App() {
               </div>
 
               <div className="grid gap-4 xl:grid-cols-[1.2fr_1fr]">
-                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                  <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="overview-lower-card overview-lower-card-violet rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                  <div className="mb-5 flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Hedge / Protection Plan</p>
-                      <h3 className="mt-2 text-xl font-semibold text-white">Hedge posture</h3>
+                      <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Hedge / protection plan</p>
+                      <h3 className="overview-panel-title mt-2 text-xl font-semibold text-white">Hedge posture</h3>
                     </div>
-                    <span className="rounded-3xl bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-200 ring-1 ring-cyan-400/15">{hedgeStatus}</span>
+                    <span className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-xs font-semibold text-violet-100">{hedgeStatus}</span>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
+                    <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4 text-sm text-slate-300" style={{ '--tile-color': '#a78bfa' }}>
                       <p className="text-slate-400">Current hedge %</p>
                       <p className="mt-2 text-2xl font-semibold text-white">{formatPercent(metrics.hedgeAllocation)}</p>
                     </div>
-                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
+                    <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4 text-sm text-slate-300" style={{ '--tile-color': '#22d3ee' }}>
                       <p className="text-slate-400">Minimum hedge</p>
                       <p className="mt-2 text-2xl font-semibold text-white">{formatPercent(settings.minHedgePercent)}</p>
                     </div>
@@ -1677,24 +1704,24 @@ function App() {
                   </div>
                 </div>
 
-                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                  <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="overview-lower-card overview-lower-card-cyan rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                  <div className="mb-5 flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Cash Deployment Plan</p>
-                      <h3 className="mt-2 text-xl font-semibold text-white">Deploy excess cash</h3>
+                      <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Cash deployment plan</p>
+                      <h3 className="overview-panel-title mt-2 text-xl font-semibold text-white">Deploy excess cash</h3>
                     </div>
-                    <span className="rounded-3xl bg-emerald-500/10 px-4 py-2 text-xs font-semibold text-emerald-200 ring-1 ring-emerald-400/15">{formatPercent(settings.minCashPercent)} min cash</span>
+                    <span className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-xs font-semibold text-cyan-100">{formatPercent(settings.minCashPercent)} min cash</span>
                   </div>
                   <div className="grid gap-3">
-                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
+                    <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4 text-sm text-slate-300" style={{ '--tile-color': '#22d3ee' }}>
                       <p className="text-slate-400">Cash value</p>
                       <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(metrics.cashValue)}</p>
                     </div>
-                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
+                    <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4 text-sm text-slate-300" style={{ '--tile-color': '#a78bfa' }}>
                       <p className="text-slate-400">Required minimum cash</p>
                       <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(cashMinimumAmount)}</p>
                     </div>
-                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
+                    <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4 text-sm text-slate-300" style={{ '--tile-color': '#22c55e' }}>
                       <p className="text-slate-400">Excess cash</p>
                       <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(cashExcess)}</p>
                     </div>
@@ -1716,17 +1743,24 @@ function App() {
                 </div>
               </div>
 
-              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                <div className="mb-4">
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Manual Trade Plan Notes</p>
-                  <h3 className="mt-2 text-2xl font-semibold text-white">Current strategy notes</h3>
+              <div className="overview-lower-card overview-lower-card-amber rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Manual trade plan notes</p>
+                    <h3 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Current strategy notes</h3>
+                  </div>
+                  <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-amber-100">
+                    Local notes
+                  </div>
                 </div>
-                <textarea
-                  value={tradePlanNotes}
-                  onChange={(e) => setTradePlanNotes(e.target.value)}
-                  placeholder="Capture your current trade plan, ideas and reminders."
-                  className="control-shell min-h-[220px] w-full rounded-[1.5rem] border border-slate-800 bg-slate-950/90 px-5 py-4 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40 shadow-sm focus:ring-cyan-400/40"
-                />
+                <div className="rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55 p-3">
+                  <textarea
+                    value={tradePlanNotes}
+                    onChange={(e) => setTradePlanNotes(e.target.value)}
+                    placeholder="Capture your current trade plan, ideas and reminders."
+                    className="control-shell min-h-[220px] w-full rounded-[1.25rem] border border-slate-800 bg-slate-950/90 px-5 py-4 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40 shadow-sm focus:ring-cyan-400/40"
+                  />
+                </div>
               </div>
             </section>
           )}
