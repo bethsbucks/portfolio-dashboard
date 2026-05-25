@@ -504,7 +504,7 @@ function App() {
           currentPercent: Number(currentPercent.toFixed(2)),
           targetWeightPercent,
           displayTarget: hasValidTarget ? formatPercent(targetWeightPercent) : 'Not set',
-          displayOverTarget: hasValidTarget && isAboveTarget ? formatPercent(currentPercent - targetWeightPercent) : '—',
+          displayOverTarget: hasValidTarget && isAboveTarget ? formatPercent(currentPercent - targetWeightPercent) : 'N/A',
           marketValue,
           unrealizedPL,
           trimReasons: reasons,
@@ -542,8 +542,8 @@ function App() {
         ticker: item.ticker,
         description: item.companyName,
         currentPrice: currentPrice || 0,
-        buyZone: item.buyZone || '—',
-        strongBuyZone: item.strongBuyZone || '—',
+        buyZone: item.buyZone || 'N/A',
+        strongBuyZone: item.strongBuyZone || 'N/A',
         targetPercent: item.targetPositionPercent || 0,
         currentPercent: 0,
         strategy: item.strategyBucket,
@@ -564,8 +564,8 @@ function App() {
       ticker: position.ticker,
       description: position.description || position.fullSymbol || position.assetType,
       currentPrice: position.currentPrice || 0,
-      buyZone: '—',
-      strongBuyZone: '—',
+      buyZone: 'N/A',
+      strongBuyZone: 'N/A',
       targetPercent: position.targetWeightPercent || 0,
       currentPercent: position.portfolioWeightPercent || 0,
       strategy: position.strategyBucket,
@@ -769,7 +769,7 @@ function App() {
                     </div>
                     <div className="rounded-3xl bg-amber-500/10 px-3 py-1.5 text-[11px] font-semibold text-amber-200 ring-1 ring-amber-400/12">If assigned</div>
                   </div>
-                  <p className="mt-3 text-xs text-amber-200">If all short puts are assigned · {formatPercent(shortPutAssignmentExposurePercent)}</p>
+                  <p className="mt-3 text-xs text-amber-200">If all short puts are assigned - {formatPercent(shortPutAssignmentExposurePercent)}</p>
                 </div>
               </div>
 
@@ -865,7 +865,7 @@ function App() {
                   <div className="mt-auto grid gap-2 pt-5 text-xs text-slate-300 sm:grid-cols-3">
                     {(() => {
                       const nonZero = metrics.allocationByStrategy.filter((s) => s.value > 0)
-                      const largest = nonZero.reduce((a, b) => (a.value >= b.value ? a : b), { name: '—', value: 0 })
+                      const largest = nonZero.reduce((a, b) => (a.value >= b.value ? a : b), { name: 'N/A', value: 0 })
                       const cashPct = metrics.totalMarketValue ? (Math.abs(metrics.cashValue) / Math.abs(metrics.totalMarketValue)) * 100 : 0
                       return (
                         <>
@@ -901,8 +901,13 @@ function App() {
                     </div>
                     <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Compact view</div>
                   </div>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full w-full divide-y divide-slate-800 text-sm">
+                  <div className="data-table-panel overflow-hidden">
+                    <table className="data-table w-full table-fixed divide-y divide-slate-800 text-sm">
+                      <colgroup>
+                        <col className="w-[28%]" />
+                        <col className="w-[42%]" />
+                        <col className="w-[30%]" />
+                      </colgroup>
                       <thead className="bg-slate-950/70 text-slate-400">
                         <tr>
                           <th className="px-2 py-2 text-left uppercase tracking-[0.18em]">Ticker</th>
@@ -912,8 +917,8 @@ function App() {
                       </thead>
                       <tbody className="divide-y divide-slate-800">
                         {top10Overview.map((position) => (
-                          <tr key={position.id} className="hover:bg-slate-900/80 transition-colors duration-150">
-                            <td className="px-2 py-2 text-slate-100 font-medium">{position.ticker}</td>
+                          <tr key={position.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
+                            <td className="px-2 py-2 text-slate-100 font-medium"><span className="ticker-chip">{position.ticker}</span></td>
                             <td className="px-2 py-2 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
                             <td className="px-2 py-2 text-right text-slate-100">{formatPercent(position.portfolioWeightPercent)}</td>
                           </tr>
@@ -944,7 +949,7 @@ function App() {
                       { label: 'Unrealized P/L', value: formatCurrency(metrics.unrealizedPL) },
                       { label: 'Cash %', value: formatPercent(cashPercent) },
                     ].map((item) => (
-                      <div key={item.label} className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-3 text-sm text-slate-300">
+                      <div key={item.label} className="signal-strip rounded-3xl p-3 text-sm text-slate-300">
                         <p className="text-[11px] uppercase tracking-[0.24em] text-slate-500">{item.label}</p>
                         <p className={`mt-1 text-base font-semibold ${item.label === 'Short put exposure' ? 'text-amber-300' : 'text-white'}`}>{item.value}</p>
                       </div>
@@ -964,7 +969,7 @@ function App() {
                   </div>
                   <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-5">
                     {riskCards.map((card) => (
-                      <div key={card.label} className={`rounded-3xl border p-3 ${badgeClasses[card.status]} border-slate-800/80 bg-slate-950/80`}>
+                      <div key={card.label} className={`signal-strip rounded-3xl p-3 ${badgeClasses[card.status]}`}>
                         <p className="text-[11px] uppercase tracking-[0.22em] text-slate-400">{card.label}</p>
                         <p className="mt-2 text-xl font-semibold text-white">{card.value}</p>
                         <p className="mt-1 text-xs text-slate-300">{card.detail}</p>
@@ -983,19 +988,19 @@ function App() {
                       <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Current</div>
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-3xl bg-slate-950/80 p-4 text-sm">
+                      <div className="signal-strip rounded-3xl p-4 text-sm">
                         <p className="text-slate-400">Exposure%</p>
                         <p className="mt-3 text-3xl font-semibold text-cyan-300">{formatPercent(metrics.optionsExposure)}</p>
                       </div>
-                      <div className="rounded-3xl bg-slate-950/80 p-4 text-sm">
+                      <div className="signal-strip rounded-3xl p-4 text-sm">
                         <p className="text-slate-400">Gross options</p>
                         <p className="mt-3 text-2xl font-semibold text-white">{formatCurrency(metrics.grossOptionValue)}</p>
                       </div>
-                      <div className="rounded-3xl bg-slate-950/80 p-4 text-sm">
+                      <div className="signal-strip rounded-3xl p-4 text-sm">
                         <p className="text-slate-400">Net options</p>
                         <p className="mt-3 text-2xl font-semibold text-white">{formatCurrency(metrics.netOptionValue)}</p>
                       </div>
-                      <div className="rounded-3xl bg-slate-950/80 p-4 text-sm">
+                      <div className="signal-strip rounded-3xl p-4 text-sm">
                         <p className="text-slate-400">Max allowed</p>
                         <p className="mt-3 text-2xl font-semibold text-white">{formatPercent(settings.maxOptionsExposurePercent)}</p>
                       </div>
@@ -1012,19 +1017,19 @@ function App() {
                     </div>
                     <p className="text-sm leading-6 text-slate-400">This panel reflects current risk posture based on existing portfolio metrics. No additional scenario calculations are added.</p>
                     <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                      <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                      <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                         <div className="flex items-center justify-between gap-3">
                           <span>Top 5 concentration</span>
                           <strong>{formatPercent(metrics.top5ConcentrationPercent)}</strong>
                         </div>
                       </div>
-                      <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                      <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                         <div className="flex items-center justify-between gap-3">
                           <span>Hedge allocation</span>
                           <strong>{formatPercent(metrics.hedgeAllocation)}</strong>
                         </div>
                       </div>
-                      <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                      <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                         <div className="flex items-center justify-between gap-3">
                           <span>{marketShock.length ? 'Trim candidates' : 'Stable posture'}</span>
                           <strong>{marketShock.length ? marketShock.length : 'None'}</strong>
@@ -1468,7 +1473,7 @@ function App() {
                           <td className="whitespace-nowrap px-3 py-3 text-right text-amber-200">{position.displayOverTarget}</td>
                           <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
                           <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.unrealizedPL)}</td>
-                          <td className="truncate px-3 py-3 text-slate-300">{position.trimReasons.join(' · ')}</td>
+                          <td className="truncate px-3 py-3 text-slate-300">{position.trimReasons.join(' - ')}</td>
                           <td className="truncate px-3 py-3 text-slate-100">{position.suggestedAction}</td>
                         </tr>
                       )) : (
@@ -1513,7 +1518,7 @@ function App() {
                         <tr key={item.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
                           <td className="px-3 py-3 text-slate-100"><span className="ticker-chip">{item.ticker}</span></td>
                           <td className="truncate px-3 py-3 text-slate-300">{item.description}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{item.currentPrice ? formatCurrency(item.currentPrice) : '—'}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{item.currentPrice ? formatCurrency(item.currentPrice) : 'N/A'}</td>
                           <td className="truncate px-3 py-3 text-slate-100">{item.buyZone}</td>
                           <td className="truncate px-3 py-3 text-slate-100">{item.strongBuyZone}</td>
                           <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatPercent(item.targetPercent)}</td>
