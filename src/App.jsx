@@ -98,6 +98,13 @@ const getGroupDescription = (group, underlying) => {
   return `${callCount} call position${callCount === 1 ? '' : 's'}`
 }
 
+const getDteBadgeClass = (dte) => {
+  if (dte === null) return 'is-muted'
+  if (dte <= 14) return 'is-danger'
+  if (dte <= 45) return 'is-warning'
+  return 'is-safe'
+}
+
 const initialWatchlistForm = {
   ticker: '',
   companyName: '',
@@ -1033,7 +1040,7 @@ function App() {
           {activeTab === 'Positions' && (
             <section className="space-y-6">
               <div className="grid gap-4 md:grid-cols-[1fr_auto]">
-                <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                   <div className="mb-4 flex items-center justify-between gap-4">
                     <div>
                       <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Positions</p>
@@ -1042,8 +1049,8 @@ function App() {
                   </div>
                   <div className="grid gap-3 sm:grid-cols-3">
                     <label className="block">
-                      <span className="text-sm text-slate-400">Search</span>
-                      <div className="mt-2 flex items-center rounded-3xl border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200 shadow-sm ring-1 ring-slate-800/40">
+                      <span className="field-label text-sm text-slate-400">Search</span>
+                      <div className="control-shell mt-2 flex items-center rounded-3xl border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200 shadow-sm ring-1 ring-slate-800/40">
                         <Search className="mr-2 h-4 w-4 text-slate-400" />
                         <input
                           type="search"
@@ -1055,16 +1062,16 @@ function App() {
                       </div>
                     </label>
                     <label className="block">
-                      <span className="text-sm text-slate-400">Asset type</span>
-                      <select value={assetFilter} onChange={(e) => setAssetFilter(e.target.value)} className="mt-2 block w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40">
+                      <span className="field-label text-sm text-slate-400">Asset type</span>
+                      <select value={assetFilter} onChange={(e) => setAssetFilter(e.target.value)} className="control-shell mt-2 block w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40">
                         {assetTypes.map((type) => (
                           <option key={type} value={type}>{type}</option>
                         ))}
                       </select>
                     </label>
                     <label className="block">
-                      <span className="text-sm text-slate-400">Strategy bucket</span>
-                      <select value={strategyFilter} onChange={(e) => setStrategyFilter(e.target.value)} className="mt-2 block w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40">
+                      <span className="field-label text-sm text-slate-400">Strategy bucket</span>
+                      <select value={strategyFilter} onChange={(e) => setStrategyFilter(e.target.value)} className="control-shell mt-2 block w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40">
                         {strategyBuckets.map((bucket) => (
                           <option key={bucket} value={bucket}>{bucket}</option>
                         ))}
@@ -1074,8 +1081,8 @@ function App() {
                 </div>
               </div>
 
-              <div className="overflow-hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/80 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60 backdrop-blur-xl">
-                <table className="w-full table-fixed divide-y divide-slate-800 text-[11px]">
+              <div className="data-panel data-table-panel overflow-hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/80 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+                <table className="data-table w-full table-fixed divide-y divide-slate-800 text-[11px]">
                   <colgroup>
                     <col className="w-[8%]" />
                     <col className="w-[19%]" />
@@ -1103,27 +1110,27 @@ function App() {
                   <tbody className="divide-y divide-slate-800">
                     {sortedPositions.length ? sortedPositions.map((position) => {
                       return (
-                        <tr key={position.id} className="hover:bg-slate-900/80 transition-colors duration-150">
+                        <tr key={position.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
                           <td className="px-2 py-3 text-slate-100">
                             {position.assetType === 'Option' && position.fullSymbol ? (
                               <div className="space-y-1">
-                                <div>{position.underlyingTicker || position.ticker}</div>
+                                <span className="ticker-chip">{position.underlyingTicker || position.ticker}</span>
                                 <div className="text-xs text-slate-500">{position.fullSymbol}</div>
                               </div>
                             ) : (
-                              position.ticker
+                              <span className="ticker-chip">{position.ticker}</span>
                             )}
                           </td>
                           <td className="truncate px-2 py-3 text-slate-300">{position.description}</td>
                           <td className="px-2 py-3">
-                            <select value={position.assetType} onChange={(e) => handlePositionChange(position.id, 'assetType', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-2 py-2 text-[11px] text-slate-100 outline-none ring-1 ring-slate-800/40">
+                            <select value={position.assetType} onChange={(e) => handlePositionChange(position.id, 'assetType', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-2 py-2 text-[11px] text-slate-100 outline-none ring-1 ring-slate-800/40">
                               {assetTypes.slice(1).map((value) => (
                                 <option key={value} value={value}>{value}</option>
                               ))}
                             </select>
                           </td>
                           <td className="px-2 py-3">
-                            <select value={position.strategyBucket} onChange={(e) => handlePositionChange(position.id, 'strategyBucket', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-2 py-2 text-[10px] text-slate-100 outline-none ring-1 ring-slate-800/40">
+                            <select value={position.strategyBucket} onChange={(e) => handlePositionChange(position.id, 'strategyBucket', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-2 py-2 text-[10px] text-slate-100 outline-none ring-1 ring-slate-800/40">
                               {strategyBuckets.slice(1).map((value) => (
                                 <option key={value} value={value}>{value}</option>
                               ))}
@@ -1152,18 +1159,18 @@ function App() {
 
           {activeTab === 'Options' && (
             <section className="space-y-6">
-              <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60 backdrop-blur-xl">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                   <div>
                     <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Options</p>
                     <h2 className="mt-2 text-2xl font-semibold text-white">Option exposure</h2>
                   </div>
-                  <div className="rounded-3xl bg-slate-950/70 px-4 py-3 text-sm text-slate-300 ring-1 ring-white/10">
+                  <div className="control-shell rounded-3xl bg-slate-950/70 px-4 py-3 text-sm text-slate-300 ring-1 ring-white/10">
                     Total options value {formatCurrency(optionRows.reduce((sum, row) => sum + Math.abs(row.marketValue), 0))}
                   </div>
                 </div>
-                <div className="overflow-hidden">
-                  <table className="w-full table-fixed divide-y divide-slate-800 text-sm">
+                <div className="data-table-panel overflow-hidden">
+                  <table className="data-table w-full table-fixed divide-y divide-slate-800 text-sm">
                     <colgroup>
                       <col className="w-[12%]" />
                       <col className="w-[10%]" />
@@ -1204,14 +1211,16 @@ function App() {
                         const dte = calculateDte(position.expiration)
                         const rowStyle = dte === null ? 'bg-slate-950/80' : dte <= 7 ? 'bg-rose-500/10' : dte <= 14 ? 'bg-amber-500/10' : dte <= 30 ? 'bg-slate-600/10' : 'bg-transparent'
                         return (
-                          <tr key={position.id} className={`${rowStyle} hover:bg-slate-900/80 transition-colors duration-150`}>
-                            <td className="truncate px-3 py-3 text-slate-100">{position.underlyingTicker || position.ticker}</td>
+                          <tr key={position.id} className={`data-row ${rowStyle} hover:bg-slate-900/80 transition-colors duration-150`}>
+                            <td className="truncate px-3 py-3 text-slate-100"><span className="ticker-chip">{position.underlyingTicker || position.ticker}</span></td>
                             <td className="truncate px-3 py-3 text-slate-300">{position.fullSymbol || position.description}</td>
                             <td className="truncate px-3 py-3 text-slate-300">{position.optionType}</td>
                             <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatQuantity(position.quantity)}</td>
                             <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{position.strike}</td>
                             <td className="whitespace-nowrap px-3 py-3 text-slate-100">{position.expiration || 'N/A'}</td>
-                            <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{dte === null ? 'N/A' : `${dte}d`}</td>
+                            <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">
+                              <span className={`dte-badge ${getDteBadgeClass(dte)}`}>{dte === null ? 'N/A' : `${dte}d`}</span>
+                            </td>
                             <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.currentPrice)}</td>
                             <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
                             <td className={`whitespace-nowrap px-3 py-3 text-right ${position.unrealizedPL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{formatCurrency(position.unrealizedPL)}</td>
