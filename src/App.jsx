@@ -66,7 +66,7 @@ const optionPutTypes = ['Long Put', 'Short Put']
 
 const isCallOption = (position) => position.assetType === 'Option' && optionCallTypes.includes(position.optionType)
 const isPutOption = (position) => position.assetType === 'Option' && optionPutTypes.includes(position.optionType)
-const isTradePlanEligiblePosition = (position) => position.assetType === 'Stock' || position.assetType === 'ETF' || isCallOption(position)
+const isTradePlanEligiblePosition = (position) => position.assetType === 'Stock' || position.assetType === 'ETF'
 const getUnderlyingGroupKey = (position) => (position.underlyingTicker || position.ticker || '').toUpperCase()
 
 const getPositionMixLabel = (group) => {
@@ -489,12 +489,20 @@ function App() {
         if (isAboveTarget) reasons.push('Above target allocation')
         if (currentPercent > settings.maxSinglePositionPercent) reasons.push('Above max position size')
         if (metrics.optionsExposure > settings.maxOptionsExposurePercent && hasCalls) reasons.push('Options exposure review')
-        if (!reasons.length) return null
 
         const positionMix = getPositionMixLabel(group)
         const description = getGroupDescription(group, underlying)
         const marketValue = group.reduce((sum, position) => sum + position.marketValue, 0)
         const unrealizedPL = group.reduce((sum, position) => sum + position.unrealizedPL, 0)
+        const suggestedAction = reasons.includes('Above max position size')
+          ? 'Review oversized position'
+          : reasons.includes('Options exposure review')
+          ? 'Review options exposure'
+          : reasons.includes('Above target allocation')
+          ? 'Trim back toward target'
+          : hasValidTarget
+          ? 'Within target'
+          : 'Set target'
 
         return {
           id: `trade-plan-group-${underlying}`,
@@ -508,17 +516,19 @@ function App() {
           marketValue,
           unrealizedPL,
           trimReasons: reasons,
-          suggestedAction: reasons.includes('Above max position size')
-            ? 'Review oversized position'
-            : reasons.includes('Options exposure review')
-            ? 'Review options exposure'
-            : reasons.includes('Above target allocation')
-            ? 'Trim back toward target'
-            : null,
+          suggestedAction,
         }
       })
-      .filter(Boolean)
+      .sort((a, b) => {
+        const reviewDelta = Number(Boolean(b.trimReasons.length)) - Number(Boolean(a.trimReasons.length))
+        if (reviewDelta) return reviewDelta
+        return Math.abs(b.marketValue) - Math.abs(a.marketValue)
+      })
   }, [positions, settings.maxSinglePositionPercent, settings.maxOptionsExposurePercent, metrics.optionsExposure, metrics.absoluteTotalMarketValue, metrics.totalMarketValue])
+
+  const reviewPositionCount = useMemo(() => {
+    return trimmedPositions.filter((position) => position.trimReasons.length > 0).length
+  }, [trimmedPositions])
 
   const underweightPositions = useMemo(() => {
     return positions.filter((position) => Number(position.targetWeightPercent) > 0 && position.portfolioWeightPercent < position.targetWeightPercent)
@@ -1551,12 +1561,12 @@ function App() {
               <div className="overview-lower-card overview-lower-card-amber rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                 <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Trim candidates</p>
-                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Positions to review</h2>
-                    <p className="mt-1 text-sm text-slate-400">Trade Plan groups stocks and calls by ticker. Puts are excluded here and tracked separately in short put exposure.</p>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Target planner</p>
+                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Stock and ETF targets</h2>
+                    <p className="mt-1 text-sm text-slate-400">Set target percentages on grouped stocks and ETFs. Options are tracked separately on the Options page and short put exposure card.</p>
                   </div>
                   <div className="overview-pill rounded-3xl bg-slate-950/70 px-4 py-2 text-sm font-semibold text-amber-100">
-                    {filteredTrimmedPositions.length} review item{filteredTrimmedPositions.length === 1 ? '' : 's'}
+                    {reviewPositionCount} review item{reviewPositionCount === 1 ? '' : 's'} / {filteredTrimmedPositions.length} target row{filteredTrimmedPositions.length === 1 ? '' : 's'}
                   </div>
                 </div>
                 <div className="data-table-panel overflow-hidden rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55">
@@ -1608,12 +1618,12 @@ function App() {
                           <td className="whitespace-nowrap px-3 py-3 text-right text-amber-200">{position.displayOverTarget}</td>
                           <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
                           <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.unrealizedPL)}</td>
-                          <td className="truncate px-3 py-3 text-slate-300">{position.trimReasons.join(' - ')}</td>
+                          <td className="truncate px-3 py-3 text-slate-300">{position.trimReasons.length ? position.trimReasons.join(' - ') : 'No action needed'}</td>
                           <td className="truncate px-3 py-3 text-slate-100">{position.suggestedAction}</td>
                         </tr>
                       )) : (
                         <tr>
-                          <td colSpan={10} className="px-3 py-12 text-center text-slate-400">No trim candidates detected based on current thresholds.</td>
+                          <td colSpan={10} className="px-3 py-12 text-center text-slate-400">No stock or ETF positions are available for target planning.</td>
                         </tr>
                       )}
                     </tbody>
