@@ -99,7 +99,7 @@ const parseBrokerOptionSymbol = (value, quantity = 0) => {
   const text = normalizeString(value)
   if (!text) return {}
 
-  const match = text.match(/^([A-Za-z0-9.^-]+)\s+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\s+([\d,]+(?:\.\d+)?)\s+([PC])$/i)
+  const match = text.match(/^([A-Za-z0-9.^-]+)\s+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})\s+([\d,]+(?:\.\d+)?)\s+([PC])$/i)
   if (!match) {
     return { fullSymbol: text }
   }
@@ -169,7 +169,7 @@ const detectCash = (ticker, description) => {
 const detectOption = (description, optionType, expiration, strike, rawType) => {
   const text = `${description} ${rawType}`.toUpperCase()
   const hasOptionWord = /(CALL|PUT|COVERED CALL|LEAP|SPREAD)/.test(text)
-  const hasExp = /\d{2}[\/\-]\d{2}[\/\-]\d{2,4}|\d{4}[\/\-]\d{2}[\/\-]\d{2}/.test(description)
+  const hasExp = /\d{2}[-/]\d{2}[-/]\d{2,4}|\d{4}[-/]\d{2}[-/]\d{2}/.test(description)
   const hasStrike = /\d+\.?\d*/.test(String(strike))
   return Boolean(optionType || hasOptionWord || hasExp || hasStrike)
 }
@@ -210,29 +210,6 @@ const normalizeAssetType = (value, description, ticker, optionType) => {
 }
 
 const normalizeRow = (row, index) => {
-  const normalizedRow = {
-    accountName: '',
-    ticker: '',
-    description: '',
-    assetType: '',
-    optionType: '',
-    strategyBucket: '',
-    quantity: 0,
-    avgCost: 0,
-    currentPrice: 0,
-    marketValue: 0,
-    costBasis: 0,
-    unrealizedPL: 0,
-    unrealizedPLPercent: 0,
-    portfolioWeightPercent: 0,
-    targetWeightPercent: 0,
-    expiration: '',
-    strike: '',
-    delta: 0,
-    theta: 0,
-    notes: '',
-  }
-
   const direct = {}
   Object.keys(row).forEach((key) => {
     const column = inferColumn(key)

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import {
   AlertTriangle,
   ArrowUpRight,
@@ -22,7 +22,6 @@ import {
   calculateDte,
   calculatePortfolioMetrics,
   formatCurrency,
-  formatNumber,
   formatPercent,
   formatQuantity,
   getActionWarnings,
@@ -30,7 +29,6 @@ import {
   getRiskCards,
   normalizePositions,
   parseCsvWithDiagnostics,
-  detectLeveragedETF,
 } from './utils/portfolioUtils.js'
 import trailerTrashLogo from './assets/trailer-trash-trading-header-logo.webp'
 
@@ -62,10 +60,8 @@ const strategyColorMap = {
 }
 
 const optionCallTypes = ['Long Call', 'Short Call']
-const optionPutTypes = ['Long Put', 'Short Put']
 
 const isCallOption = (position) => position.assetType === 'Option' && optionCallTypes.includes(position.optionType)
-const isPutOption = (position) => position.assetType === 'Option' && optionPutTypes.includes(position.optionType)
 const isTradePlanEligiblePosition = (position) => position.assetType === 'Stock' || position.assetType === 'ETF'
 const getUnderlyingGroupKey = (position) => (position.underlyingTicker || position.ticker || '').toUpperCase()
 
@@ -158,12 +154,47 @@ const initialWatchlistForm = {
   notes: '',
 }
 
+const readLocalStorage = (key) => {
+  if (typeof localStorage === 'undefined') return null
+  try {
+    return localStorage.getItem(key)
+  } catch (error) {
+    console.error(`Failed to read local storage key ${key}`, error)
+    return null
+  }
+}
+
+const readStoredPositions = () => {
+  const storedPositions = readLocalStorage(STORAGE_KEYS.positions)
+  if (!storedPositions) return []
+
+  try {
+    const parsed = JSON.parse(storedPositions)
+    return normalizePositions(Array.isArray(parsed) ? parsed : [])
+  } catch (error) {
+    console.error('Failed to load stored positions', error)
+    return []
+  }
+}
+
+const readStoredJson = (key, fallback) => {
+  const storedValue = readLocalStorage(key)
+  if (!storedValue) return fallback
+
+  try {
+    return JSON.parse(storedValue) || fallback
+  } catch (error) {
+    console.error(`Failed to parse local storage key ${key}`, error)
+    return fallback
+  }
+}
+
 function App() {
   const [activeTab, setActiveTab] = useState('Overview')
-  const [positions, setPositions] = useState([])
-  const [watchlist, setWatchlist] = useState([])
-  const [settings, setSettings] = useState(defaultSettings)
-  const [importTimestamp, setImportTimestamp] = useState('')
+  const [positions, setPositions] = useState(readStoredPositions)
+  const [watchlist, setWatchlist] = useState(() => readStoredJson(STORAGE_KEYS.watchlist, []))
+  const [settings, setSettings] = useState(() => ({ ...defaultSettings, ...readStoredJson(STORAGE_KEYS.settings, {}) }))
+  const [importTimestamp, setImportTimestamp] = useState(() => readLocalStorage(STORAGE_KEYS.importTimestamp) || '')
   const [searchTerm, setSearchTerm] = useState('')
   const [assetFilter, setAssetFilter] = useState('All')
   const [strategyFilter, setStrategyFilter] = useState('All')
@@ -173,33 +204,8 @@ function App() {
   const [jsonMessage, setJsonMessage] = useState('')
   const [csvDiagnostics, setCsvDiagnostics] = useState(null)
   const [watchlistForm, setWatchlistForm] = useState(initialWatchlistForm)
-  const [tradePlanNotes, setTradePlanNotes] = useState('')
+  const [tradePlanNotes, setTradePlanNotes] = useState(() => readLocalStorage(STORAGE_KEYS.tradePlanNotes) || '')
   const [showTargetsOnly, setShowTargetsOnly] = useState(false)
-
-  useEffect(() => {
-    try {
-      const storedPositions = localStorage.getItem(STORAGE_KEYS.positions)
-      const storedWatchlist = localStorage.getItem(STORAGE_KEYS.watchlist)
-      const storedSettings = localStorage.getItem(STORAGE_KEYS.settings)
-      const storedTimestamp = localStorage.getItem(STORAGE_KEYS.importTimestamp)
-
-      if (storedPositions) {
-        const parsed = JSON.parse(storedPositions)
-        setPositions(normalizePositions(Array.isArray(parsed) ? parsed : []))
-      }
-      if (storedWatchlist) {
-        setWatchlist(JSON.parse(storedWatchlist) || [])
-      }
-      if (storedSettings) {
-        setSettings({ ...defaultSettings, ...JSON.parse(storedSettings) })
-      }
-      if (storedTimestamp) {
-        setImportTimestamp(storedTimestamp)
-      }
-    } catch (error) {
-      console.error('Failed to load local storage', error)
-    }
-  }, [])
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.positions, JSON.stringify(positions))
@@ -216,13 +222,6 @@ function App() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.importTimestamp, importTimestamp)
   }, [importTimestamp])
-
-  useEffect(() => {
-    const storedNotes = localStorage.getItem(STORAGE_KEYS.tradePlanNotes)
-    if (storedNotes != null) {
-      setTradePlanNotes(storedNotes)
-    }
-  }, [])
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.tradePlanNotes, tradePlanNotes)
@@ -386,15 +385,6 @@ function App() {
     setWatchlist((current) =>
       current.map((row) => (row.id !== id ? row : { ...row, [field]: value })),
     )
-  }
-
-  const handleInlineTargetChange = (source, id, value) => {
-    const num = value === '' || value === null ? '' : Number(value)
-    if (source === 'position') {
-      handlePositionChange(id, 'targetWeightPercent', num === '' ? '' : num)
-    } else if (source === 'watchlist') {
-      handleWatchlistChange(id, 'targetPositionPercent', num === '' ? 0 : num)
-    }
   }
 
   const addWatchlistItem = () => {
