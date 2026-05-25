@@ -715,7 +715,7 @@ function App() {
           {activeTab === 'Overview' && (
             <section className="space-y-3">
               <div className="grid gap-3 xl:grid-cols-[repeat(5,minmax(0,1fr))] items-start">
-                <div className="metric-card metric-card-cyan rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-cyan-400/10">
+                <div className="top-metric-card metric-card metric-card-cyan rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-cyan-400/10">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-slate-500">Total portfolio</p>
@@ -726,7 +726,7 @@ function App() {
                   <p className="mt-3 text-xs text-slate-400">Updated locally with current cash, stock and option exposure.</p>
                 </div>
 
-                <div className="metric-card metric-card-emerald rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-emerald-400/10">
+                <div className="top-metric-card metric-card metric-card-emerald rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-emerald-400/10">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-slate-500">Cash & short-term</p>
@@ -737,7 +737,7 @@ function App() {
                   <p className="mt-3 text-xs text-slate-400">{formatPercent(cashPercent)} of portfolio</p>
                 </div>
 
-                <div className="metric-card metric-card-emerald rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
+                <div className="top-metric-card metric-card metric-card-emerald rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-slate-500">Unrealized P/L</p>
@@ -750,7 +750,7 @@ function App() {
                   <p className="mt-3 text-xs text-slate-400">Net performance across current positions.</p>
                 </div>
 
-                <div className="metric-card metric-card-violet rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-fuchsia-400/10">
+                <div className="top-metric-card metric-card metric-card-violet rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-fuchsia-400/10">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-slate-500">Largest position</p>
@@ -761,7 +761,7 @@ function App() {
                   <p className="mt-3 text-xs text-slate-400">{largestPositionLabel}</p>
                 </div>
 
-                <div className="metric-card metric-card-amber rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-amber-400/10">
+                <div className="top-metric-card metric-card metric-card-amber rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-amber-400/10">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.32em] text-amber-300">Short Put Exposure</p>
@@ -774,7 +774,7 @@ function App() {
               </div>
 
               {/* Full-width Action Needed panel placed under top summary cards */}
-              <div className="mt-3 rounded-[1.5rem] border border-slate-800/90 bg-slate-900/80 p-3 shadow-[0_10px_40px_-20px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60">
+              <div className="action-needed-card mt-3 rounded-[1.5rem] border border-slate-800/90 bg-slate-900/80 p-3 shadow-[0_10px_40px_-20px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60">
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-3xl bg-rose-500/10 text-rose-200 ring-1 ring-rose-400/20">
@@ -789,7 +789,7 @@ function App() {
                 <div className="flex flex-wrap gap-3">
                   {displayWarnings.length ? (
                     displayWarnings.map((warning) => (
-                      <div key={warning.message} className={`flex-1 min-w-[220px] max-w-[480px] rounded-3xl border px-3 py-2 text-sm shadow-sm ${warning.type === 'danger' ? 'border-rose-500/20 bg-rose-500/10 text-rose-100' : 'border-amber-400/20 bg-amber-500/10 text-amber-100'}`}>
+                      <div key={warning.message} className={`warning-tile flex-1 min-w-[220px] max-w-[480px] rounded-3xl border px-3 py-2 text-sm shadow-sm ${warning.type === 'danger' ? 'border-rose-500/20 bg-rose-500/10 text-rose-100' : 'border-amber-400/20 bg-amber-500/10 text-amber-100'}`} style={{ '--tile-color': warning.type === 'danger' ? '#fb7185' : '#f59e0b' }}>
                         <div className="inline-flex items-center gap-2 font-semibold text-slate-100">
                           <AlertTriangle className={`h-3.5 w-3.5 ${warning.type === 'danger' ? 'text-rose-300' : 'text-amber-300'}`} />
                           {warning.type === 'danger' ? 'Critical' : 'Warning'}
