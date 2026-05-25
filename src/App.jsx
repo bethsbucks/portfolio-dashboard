@@ -1242,7 +1242,7 @@ function App() {
 
           {activeTab === 'Watchlist' && (
             <section className="space-y-6">
-              <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                 <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Watchlist</p>
@@ -1251,48 +1251,48 @@ function App() {
                 </div>
                 <div className="grid gap-3 lg:grid-cols-3">
                   <label className="block">
-                    <span className="text-sm text-slate-400">Ticker</span>
-                    <input type="text" value={watchlistForm.ticker} onChange={(e) => setWatchlistForm((current) => ({ ...current, ticker: e.target.value }))} className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    <span className="field-label text-sm text-slate-400">Ticker</span>
+                    <input type="text" value={watchlistForm.ticker} onChange={(e) => setWatchlistForm((current) => ({ ...current, ticker: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
                   </label>
                   <label className="block">
-                    <span className="text-sm text-slate-400">Current price</span>
-                    <input type="number" value={watchlistForm.currentPrice} onChange={(e) => setWatchlistForm((current) => ({ ...current, currentPrice: e.target.value }))} className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    <span className="field-label text-sm text-slate-400">Current price</span>
+                    <input type="number" value={watchlistForm.currentPrice} onChange={(e) => setWatchlistForm((current) => ({ ...current, currentPrice: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
                   </label>
                   <label className="block">
-                    <span className="text-sm text-slate-400">Buy zone</span>
-                    <input type="text" value={watchlistForm.buyZone} onChange={(e) => setWatchlistForm((current) => ({ ...current, buyZone: e.target.value }))} className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    <span className="field-label text-sm text-slate-400">Buy zone</span>
+                    <input type="text" value={watchlistForm.buyZone} onChange={(e) => setWatchlistForm((current) => ({ ...current, buyZone: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
                   </label>
                   <label className="block">
-                    <span className="text-sm text-slate-400">Strong buy zone</span>
-                    <input type="text" value={watchlistForm.strongBuyZone} onChange={(e) => setWatchlistForm((current) => ({ ...current, strongBuyZone: e.target.value }))} className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    <span className="field-label text-sm text-slate-400">Strong buy zone</span>
+                    <input type="text" value={watchlistForm.strongBuyZone} onChange={(e) => setWatchlistForm((current) => ({ ...current, strongBuyZone: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
                   </label>
                   <label className="block">
-                    <span className="text-sm text-slate-400">Target %</span>
-                    <input type="number" value={watchlistForm.targetPositionPercent} onChange={(e) => setWatchlistForm((current) => ({ ...current, targetPositionPercent: e.target.value }))} className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    <span className="field-label text-sm text-slate-400">Target %</span>
+                    <input type="number" value={watchlistForm.targetPositionPercent} onChange={(e) => setWatchlistForm((current) => ({ ...current, targetPositionPercent: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
                   </label>
                   <label className="block">
-                    <span className="text-sm text-slate-400">Strategy bucket</span>
-                    <select value={watchlistForm.strategyBucket} onChange={(e) => setWatchlistForm((current) => ({ ...current, strategyBucket: e.target.value }))} className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5">
+                    <span className="field-label text-sm text-slate-400">Strategy bucket</span>
+                    <select value={watchlistForm.strategyBucket} onChange={(e) => setWatchlistForm((current) => ({ ...current, strategyBucket: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5">
                       {strategyBuckets.slice(1).map((value) => (
                         <option key={value} value={value}>{value}</option>
                       ))}
                     </select>
                   </label>
                   <label className="block lg:col-span-3">
-                    <span className="text-sm text-slate-400">Notes</span>
-                    <input type="text" value={watchlistForm.notes} onChange={(e) => setWatchlistForm((current) => ({ ...current, notes: e.target.value }))} className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                    <span className="field-label text-sm text-slate-400">Notes</span>
+                    <input type="text" value={watchlistForm.notes} onChange={(e) => setWatchlistForm((current) => ({ ...current, notes: e.target.value }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
                   </label>
                 </div>
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <button type="button" onClick={addWatchlistItem} className="inline-flex items-center justify-center gap-2 rounded-3xl bg-slate-100/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-100/15">
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <button type="button" onClick={addWatchlistItem} className="action-button gap-2 px-5 py-3 text-sm">
                     <Plus className="h-4 w-4" /> Add watchlist row
                   </button>
                   <p className="text-sm text-slate-400">Store watchlist entries locally for later review.</p>
                 </div>
               </div>
 
-              <div className="overflow-hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/80 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
-                <table className="w-full table-fixed divide-y divide-slate-800 text-sm">
+              <div className="data-panel data-table-panel overflow-hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/80 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <table className="data-table w-full table-fixed divide-y divide-slate-800 text-sm">
                   <colgroup>
                     <col className="w-[11%]" />
                     <col className="w-[11%]" />
@@ -1312,16 +1312,16 @@ function App() {
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {watchlist.length ? watchlist.map((item) => (
-                      <tr key={item.id} className="hover:bg-slate-900/80 transition-colors duration-150">
-                        <td className="px-3 py-3 text-slate-100">{item.ticker}</td>
-                        <td className="px-3 py-3"><input type="number" value={item.currentPrice} onChange={(e) => handleWatchlistChange(item.id, 'currentPrice', Number(e.target.value))} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
-                        <td className="px-3 py-3"><input type="text" value={item.buyZone} onChange={(e) => handleWatchlistChange(item.id, 'buyZone', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
-                        <td className="px-3 py-3"><input type="text" value={item.strongBuyZone} onChange={(e) => handleWatchlistChange(item.id, 'strongBuyZone', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
-                        <td className="px-3 py-3"><input type="number" value={item.targetPositionPercent} onChange={(e) => handleWatchlistChange(item.id, 'targetPositionPercent', Number(e.target.value))} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
-                        <td className="px-3 py-3"><select value={item.strategyBucket} onChange={(e) => handleWatchlistChange(item.id, 'strategyBucket', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5">{strategyBuckets.slice(1).map((value) => <option key={value} value={value}>{value}</option>)}</select></td>
-                        <td className="px-3 py-3 text-slate-300"><input type="text" value={item.notes} onChange={(e) => handleWatchlistChange(item.id, 'notes', e.target.value)} className="w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
+                      <tr key={item.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
+                        <td className="px-3 py-3 text-slate-100"><span className="ticker-chip">{item.ticker}</span></td>
+                        <td className="px-3 py-3"><input type="number" value={item.currentPrice} onChange={(e) => handleWatchlistChange(item.id, 'currentPrice', Number(e.target.value))} className="table-input w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
+                        <td className="px-3 py-3"><input type="text" value={item.buyZone} onChange={(e) => handleWatchlistChange(item.id, 'buyZone', e.target.value)} className="table-input w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
+                        <td className="px-3 py-3"><input type="text" value={item.strongBuyZone} onChange={(e) => handleWatchlistChange(item.id, 'strongBuyZone', e.target.value)} className="table-input w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
+                        <td className="px-3 py-3"><input type="number" value={item.targetPositionPercent} onChange={(e) => handleWatchlistChange(item.id, 'targetPositionPercent', Number(e.target.value))} className="table-input w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
+                        <td className="px-3 py-3"><select value={item.strategyBucket} onChange={(e) => handleWatchlistChange(item.id, 'strategyBucket', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5">{strategyBuckets.slice(1).map((value) => <option key={value} value={value}>{value}</option>)}</select></td>
+                        <td className="px-3 py-3 text-slate-300"><input type="text" value={item.notes} onChange={(e) => handleWatchlistChange(item.id, 'notes', e.target.value)} className="table-input w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-white/5" /></td>
                         <td className="px-3 py-3">
-                          <button type="button" onClick={() => removeWatchlistItem(item.id)} className="rounded-3xl bg-rose-500/10 px-3 py-2 text-sm text-rose-200 ring-1 ring-rose-400/10 transition hover:bg-rose-500/15">Delete</button>
+                          <button type="button" onClick={() => removeWatchlistItem(item.id)} className="action-button is-danger px-3 py-2 text-sm">Delete</button>
                         </td>
                       </tr>
                     )) : (
@@ -1340,70 +1340,70 @@ function App() {
           {activeTab === 'Trade Plan' && (
             <section className="space-y-6">
               <div className="grid gap-2 xl:grid-cols-[repeat(3,minmax(0,1fr))]">
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-3 shadow-[0_8px_32px_-16px_rgba(15,23,42,0.6)] ring-1 ring-slate-800/40 col-span-full">
+                <div className="data-panel rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-3 shadow-[0_8px_32px_-16px_rgba(15,23,42,0.6)] ring-1 ring-slate-800/40 col-span-full">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Planning targets</p>
                       <p className="mt-1 text-sm text-slate-300">Set target percentages on positions or watchlist items to generate better trim/add suggestions.</p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <label className="inline-flex items-center gap-2 text-sm text-slate-300">
-                        <input type="checkbox" checked={showTargetsOnly} onChange={(e) => setShowTargetsOnly(e.target.checked)} className="h-4 w-4 rounded bg-slate-800" />
+                      <label className="control-shell inline-flex items-center gap-2 rounded-3xl border border-slate-800 bg-slate-950/80 px-4 py-3 text-sm text-slate-300">
+                        <input type="checkbox" checked={showTargetsOnly} onChange={(e) => setShowTargetsOnly(e.target.checked)} className="h-4 w-4 rounded bg-slate-800 accent-cyan-300" />
                         Show only positions with targets
                       </label>
                     </div>
                   </div>
                 </div>
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
+                <div className="plan-card metric-card-cyan rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Portfolio value</p>
                   <h3 className="mt-2 text-3xl font-semibold text-white">{formatCurrency(metrics.totalMarketValue)}</h3>
                   <div className="mt-3 space-y-2 text-sm text-slate-300">
-                    <div className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/80 px-3 py-2">
+                    <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Unrealized P/L</span>
                       <span className={`${metrics.unrealizedPL >= 0 ? 'text-emerald-300' : 'text-rose-300'} font-semibold`}>{formatCurrency(metrics.unrealizedPL)}</span>
                     </div>
-                    <div className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/80 px-3 py-2">
+                    <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Unrealized %</span>
                       <span className={`${metrics.unrealizedPL >= 0 ? 'text-emerald-300' : 'text-rose-300'} font-semibold`}>{formatPercent(metrics.totalMarketValue ? (metrics.unrealizedPL / metrics.totalMarketValue) * 100 : 0)}</span>
                     </div>
                   </div>
                 </div>
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
+                <div className="plan-card metric-card-emerald rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Cash available</p>
                   <h3 className="mt-2 text-3xl font-semibold text-white">{formatCurrency(metrics.cashValue)}</h3>
                   <p className="mt-1 text-sm text-slate-300">{formatPercent(cashPercent)} of portfolio</p>
                   <div className="mt-3 space-y-2 text-sm text-slate-300">
-                    <div className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/80 px-3 py-2">
+                    <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Short Put Exposure</span>
                       <span className="font-semibold text-amber-300">{formatCurrency(shortPutAssignmentExposure)}</span>
                     </div>
-                    <div className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/80 px-3 py-2">
+                    <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Cash After Assignment</span>
                       <span className={`${metrics.cashValue - shortPutAssignmentExposure >= 0 ? 'text-cyan-300' : 'text-rose-300'} font-semibold`}>{formatCurrency(metrics.cashValue - shortPutAssignmentExposure)}</span>
                     </div>
                     <p className={`text-sm font-semibold ${metrics.cashValue - shortPutAssignmentExposure >= 0 ? 'text-cyan-300' : 'text-rose-300'}`}>{metrics.cashValue - shortPutAssignmentExposure >= 0 ? 'Covered' : 'Cash shortfall'}</p>
                   </div>
                 </div>
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
+                <div className="plan-card metric-card-violet rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-4 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60">
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Plan indicators</p>
                   <div className="mt-3 space-y-2 text-sm text-slate-300">
-                    <div className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/80 px-3 py-2">
+                    <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Overweight positions</span>
                       <strong className="text-white">{overweightCount}</strong>
                     </div>
-                    <div className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/80 px-3 py-2">
+                    <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Underweight/watchlist</span>
                       <strong className="text-white">{underweightPositions.length + watchlistAddCandidates.length}</strong>
                     </div>
-                    <div className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/80 px-3 py-2">
+                    <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Hedge status</span>
                       <strong className="text-white">{hedgeStatus}</strong>
                     </div>
-                    <div className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/80 px-3 py-2">
+                    <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Options exposure</span>
                       <strong className="text-white">{metrics.optionsExposure > settings.maxOptionsExposurePercent ? 'High' : 'Normal'}</strong>
                     </div>
-                    <div className="flex items-center justify-between rounded-3xl border border-slate-800/80 bg-slate-950/80 px-3 py-2">
+                    <div className="signal-strip flex items-center justify-between px-3 py-2">
                       <span>Short put exposure</span>
                       <strong className="text-amber-300">{shortPutAssignmentExposure > 0 ? formatCurrency(shortPutAssignmentExposure) : 'None'}</strong>
                     </div>
@@ -1411,7 +1411,7 @@ function App() {
                 </div>
               </div>
 
-              <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Trim Candidates</p>
@@ -1419,29 +1419,41 @@ function App() {
                     <p className="mt-1 text-sm text-slate-400">Trade Plan groups stocks and calls by ticker. Puts are excluded here and tracked separately in short put exposure.</p>
                   </div>
                 </div>
-                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-950">
-                  <table className="w-full min-w-max divide-y divide-slate-800 text-sm">
+                <div className="data-table-panel overflow-hidden">
+                  <table className="data-table w-full table-fixed divide-y divide-slate-800 text-[12px]">
+                    <colgroup>
+                      <col className="w-[8%]" />
+                      <col className="w-[10%]" />
+                      <col className="w-[15%]" />
+                      <col className="w-[8%]" />
+                      <col className="w-[8%]" />
+                      <col className="w-[8%]" />
+                      <col className="w-[11%]" />
+                      <col className="w-[10%]" />
+                      <col className="w-[12%]" />
+                      <col className="w-[10%]" />
+                    </colgroup>
                     <thead className="bg-slate-950/70 text-slate-400">
                       <tr>
-                        <th className="sticky left-0 z-20 bg-slate-950/95 whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">Ticker</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">Position Mix</th>
-                        <th className="max-w-[220px] whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">Description</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">Current %</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">Target %</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">Over Target %</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">Market Value</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">Unrealized P/L</th>
-                        <th className="max-w-[220px] whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">Reason</th>
-                        <th className="max-w-[220px] whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">Suggested Action</th>
+                        <th className="px-3 py-3 text-left uppercase leading-tight tracking-[0.16em] text-slate-400">Ticker</th>
+                        <th className="px-3 py-3 text-left uppercase leading-tight tracking-[0.16em] text-slate-400">Mix</th>
+                        <th className="px-3 py-3 text-left uppercase leading-tight tracking-[0.16em] text-slate-400">Description</th>
+                        <th className="px-3 py-3 text-right uppercase leading-tight tracking-[0.16em] text-slate-400">Current %</th>
+                        <th className="px-3 py-3 text-right uppercase leading-tight tracking-[0.16em] text-slate-400">Target %</th>
+                        <th className="px-3 py-3 text-right uppercase leading-tight tracking-[0.16em] text-slate-400">Over %</th>
+                        <th className="px-3 py-3 text-right uppercase leading-tight tracking-[0.16em] text-slate-400">Market Value</th>
+                        <th className="px-3 py-3 text-right uppercase leading-tight tracking-[0.16em] text-slate-400">Unrealized</th>
+                        <th className="px-3 py-3 text-left uppercase leading-tight tracking-[0.16em] text-slate-400">Reason</th>
+                        <th className="px-3 py-3 text-left uppercase leading-tight tracking-[0.16em] text-slate-400">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800">
                       {filteredTrimmedPositions.length ? filteredTrimmedPositions.map((position) => (
-                        <tr key={position.id} className="hover:bg-slate-900/80 transition-colors duration-150">
-                          <td className="sticky left-0 z-10 bg-slate-950/95 px-3 py-3 text-slate-100 font-medium">{position.ticker}</td>
-                          <td className="px-3 py-3 text-slate-300">{position.positionMix}</td>
-                          <td className="max-w-[220px] truncate px-3 py-3 text-slate-300">{position.description}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-slate-100">{formatPercent(position.currentPercent)}</td>
+                        <tr key={position.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
+                          <td className="px-3 py-3 text-slate-100"><span className="ticker-chip">{position.ticker}</span></td>
+                          <td className="truncate px-3 py-3 text-slate-300">{position.positionMix}</td>
+                          <td className="truncate px-3 py-3 text-slate-300">{position.description}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatPercent(position.currentPercent)}</td>
                           <td className="px-3 py-3 text-slate-100">
                             <input
                               type="number"
@@ -1450,14 +1462,14 @@ function App() {
                               placeholder="Set %"
                               value={position.targetWeightPercent > 0 ? position.targetWeightPercent : ''}
                               onChange={(e) => handleGroupedTargetChange(position.ticker, e.target.value)}
-                              className="w-24 rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40 placeholder:text-slate-500"
+                              className="table-input w-full rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-right text-slate-100 outline-none ring-1 ring-slate-800/40 placeholder:text-slate-500"
                             />
                           </td>
-                          <td className="whitespace-nowrap px-3 py-3 text-amber-200">{position.displayOverTarget}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-slate-100">{formatCurrency(position.marketValue)}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-slate-100">{formatCurrency(position.unrealizedPL)}</td>
-                          <td className="max-w-[220px] truncate px-3 py-3 text-slate-300">{position.trimReasons.join(' · ')}</td>
-                          <td className="max-w-[220px] truncate px-3 py-3 text-slate-100">{position.suggestedAction}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-amber-200">{position.displayOverTarget}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.marketValue)}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.unrealizedPL)}</td>
+                          <td className="truncate px-3 py-3 text-slate-300">{position.trimReasons.join(' · ')}</td>
+                          <td className="truncate px-3 py-3 text-slate-100">{position.suggestedAction}</td>
                         </tr>
                       )) : (
                         <tr>
@@ -1469,34 +1481,45 @@ function App() {
                 </div>
               </div>
 
-              <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Add Candidates</p>
                     <h2 className="mt-2 text-2xl font-semibold text-white">Opportunities to add</h2>
                   </div>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-slate-800 text-sm">
+                <div className="data-table-panel overflow-hidden">
+                  <table className="data-table w-full table-fixed divide-y divide-slate-800 text-[12px]">
+                    <colgroup>
+                      <col className="w-[8%]" />
+                      <col className="w-[18%]" />
+                      <col className="w-[11%]" />
+                      <col className="w-[12%]" />
+                      <col className="w-[13%]" />
+                      <col className="w-[8%]" />
+                      <col className="w-[8%]" />
+                      <col className="w-[10%]" />
+                      <col className="w-[12%]" />
+                    </colgroup>
                     <thead className="bg-slate-950/70 text-slate-400">
                       <tr>
                         {['Ticker', 'Company / Description', 'Current Price', 'Buy Zone', 'Strong Buy Zone', 'Target %', 'Current %', 'Strategy', 'Suggested Action'].map((label) => (
-                          <th key={label} className="whitespace-nowrap px-3 py-3 text-left uppercase tracking-[0.2em] text-slate-400">{label}</th>
+                          <th key={label} className={`px-3 py-3 uppercase leading-tight tracking-[0.16em] text-slate-400 ${['Current Price', 'Target %', 'Current %'].includes(label) ? 'text-right' : 'text-left'}`}>{label}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800">
                       {addCandidates.length ? addCandidates.map((item) => (
-                        <tr key={item.id} className="hover:bg-slate-900/80 transition-colors duration-150">
-                          <td className="px-3 py-3 text-slate-100 font-medium">{item.ticker}</td>
-                          <td className="px-3 py-3 text-slate-300">{item.description}</td>
-                          <td className="px-3 py-3 text-slate-100">{item.currentPrice ? formatCurrency(item.currentPrice) : '—'}</td>
-                          <td className="px-3 py-3 text-slate-100">{item.buyZone}</td>
-                          <td className="px-3 py-3 text-slate-100">{item.strongBuyZone}</td>
-                          <td className="px-3 py-3 text-slate-100">{formatPercent(item.targetPercent)}</td>
-                          <td className="px-3 py-3 text-slate-100">{formatPercent(item.currentPercent)}</td>
-                          <td className="px-3 py-3 text-slate-100">{item.strategy}</td>
-                          <td className="px-3 py-3 text-slate-300">{item.suggestedAction}</td>
+                        <tr key={item.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
+                          <td className="px-3 py-3 text-slate-100"><span className="ticker-chip">{item.ticker}</span></td>
+                          <td className="truncate px-3 py-3 text-slate-300">{item.description}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{item.currentPrice ? formatCurrency(item.currentPrice) : '—'}</td>
+                          <td className="truncate px-3 py-3 text-slate-100">{item.buyZone}</td>
+                          <td className="truncate px-3 py-3 text-slate-100">{item.strongBuyZone}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatPercent(item.targetPercent)}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatPercent(item.currentPercent)}</td>
+                          <td className="truncate px-3 py-3 text-slate-100">{item.strategy}</td>
+                          <td className="truncate px-3 py-3 text-slate-300">{item.suggestedAction}</td>
                         </tr>
                       )) : (
                         <tr>
@@ -1509,7 +1532,7 @@ function App() {
               </div>
 
               <div className="grid gap-4 xl:grid-cols-[1.2fr_1fr]">
-                <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Hedge / Protection Plan</p>
@@ -1518,11 +1541,11 @@ function App() {
                     <span className="rounded-3xl bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-200 ring-1 ring-cyan-400/15">{hedgeStatus}</span>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Current hedge %</p>
                       <p className="mt-2 text-2xl font-semibold text-white">{formatPercent(metrics.hedgeAllocation)}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Minimum hedge</p>
                       <p className="mt-2 text-2xl font-semibold text-white">{formatPercent(settings.minHedgePercent)}</p>
                     </div>
@@ -1532,13 +1555,13 @@ function App() {
                       <p className="text-slate-400">Current hedge positions</p>
                       <p className="mt-2 text-white">{hedgePositions.length ? hedgePositions.map((position) => position.ticker).join(', ') : 'None'}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4">
+                    <div className="signal-strip rounded-3xl p-4">
                       <p className="text-slate-300">Consider adding hedge exposure, but keep position sizing controlled.</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Cash Deployment Plan</p>
@@ -1547,19 +1570,19 @@ function App() {
                     <span className="rounded-3xl bg-emerald-500/10 px-4 py-2 text-xs font-semibold text-emerald-200 ring-1 ring-emerald-400/15">{formatPercent(settings.minCashPercent)} min cash</span>
                   </div>
                   <div className="grid gap-3">
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Cash value</p>
                       <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(metrics.cashValue)}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Required minimum cash</p>
                       <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(cashMinimumAmount)}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Excess cash</p>
                       <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(cashExcess)}</p>
                     </div>
-                    <div className="space-y-2 rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip space-y-2 rounded-3xl p-4 text-sm text-slate-300">
                       <div className="flex items-center justify-between">
                         <span>25% deployment</span>
                         <strong className="text-white">{formatCurrency(deployment25)}</strong>
@@ -1577,7 +1600,7 @@ function App() {
                 </div>
               </div>
 
-              <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                 <div className="mb-4">
                   <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Manual Trade Plan Notes</p>
                   <h3 className="mt-2 text-2xl font-semibold text-white">Current strategy notes</h3>
@@ -1586,7 +1609,7 @@ function App() {
                   value={tradePlanNotes}
                   onChange={(e) => setTradePlanNotes(e.target.value)}
                   placeholder="Capture your current trade plan, ideas and reminders."
-                  className="min-h-[220px] w-full rounded-[1.5rem] border border-slate-800 bg-slate-950/90 px-5 py-4 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40 shadow-sm focus:ring-cyan-400/40"
+                  className="control-shell min-h-[220px] w-full rounded-[1.5rem] border border-slate-800 bg-slate-950/90 px-5 py-4 text-sm text-slate-100 outline-none ring-1 ring-slate-800/40 shadow-sm focus:ring-cyan-400/40"
                 />
               </div>
             </section>
