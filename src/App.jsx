@@ -974,77 +974,80 @@ function App() {
               </div>
 
               <div className="space-y-3">
-                <div className="rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+                <div className="overview-lower-card overview-lower-card-amber rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Risk dashboard</p>
-                      <h3 className="mt-2 text-lg font-semibold text-white">Portfolio posture</h3>
+                      <p className="overview-panel-kicker text-xs uppercase tracking-[0.3em] text-slate-400">Risk dashboard</p>
+                      <h3 className="overview-panel-title mt-2 text-lg font-semibold text-white">Portfolio posture</h3>
                     </div>
-                    <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Status</div>
+                    <div className="overview-pill rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Status</div>
                   </div>
                   <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-5">
-                    {riskCards.map((card) => (
-                      <div key={card.label} className={`signal-strip rounded-3xl p-3 ${badgeClasses[card.status]}`}>
-                        <p className="text-[11px] uppercase tracking-[0.22em] text-slate-400">{card.label}</p>
-                        <p className="mt-2 text-xl font-semibold text-white">{card.value}</p>
-                        <p className="mt-1 text-xs text-slate-300">{card.detail}</p>
-                      </div>
-                    ))}
+                    {riskCards.map((card) => {
+                      const tileColor = card.status === 'danger' ? '#fb7185' : card.status === 'warning' ? '#f59e0b' : '#22c55e'
+                      return (
+                        <div key={card.label} className={`risk-tile signal-strip rounded-3xl p-3 ${badgeClasses[card.status]}`} style={{ '--tile-color': tileColor }}>
+                          <p className="text-[11px] uppercase tracking-[0.22em] text-slate-400">{card.label}</p>
+                          <p className="mt-2 text-xl font-semibold text-white">{card.value}</p>
+                          <p className="mt-1 text-xs text-slate-300">{card.detail}</p>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
 
                 <div className="grid gap-3 xl:grid-cols-2">
-                  <div className="min-h-[260px] rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+                  <div className="overview-lower-card overview-lower-card-cyan min-h-[260px] rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Options exposure</p>
-                        <h3 className="mt-2 text-lg font-semibold text-white">Options position</h3>
+                        <p className="overview-panel-kicker text-xs uppercase tracking-[0.3em] text-slate-400">Options exposure</p>
+                        <h3 className="overview-panel-title mt-2 text-lg font-semibold text-white">Options position</h3>
                       </div>
-                      <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Current</div>
+                      <div className="overview-pill rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Current</div>
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="signal-strip rounded-3xl p-4 text-sm">
+                      <div className="lower-metric-tile signal-strip rounded-3xl p-4 text-sm" style={{ '--tile-color': '#22d3ee' }}>
                         <p className="text-slate-400">Exposure%</p>
                         <p className="mt-3 text-3xl font-semibold text-cyan-300">{formatPercent(metrics.optionsExposure)}</p>
                       </div>
-                      <div className="signal-strip rounded-3xl p-4 text-sm">
+                      <div className="lower-metric-tile signal-strip rounded-3xl p-4 text-sm" style={{ '--tile-color': '#a78bfa' }}>
                         <p className="text-slate-400">Gross options</p>
                         <p className="mt-3 text-2xl font-semibold text-white">{formatCurrency(metrics.grossOptionValue)}</p>
                       </div>
-                      <div className="signal-strip rounded-3xl p-4 text-sm">
+                      <div className="lower-metric-tile signal-strip rounded-3xl p-4 text-sm" style={{ '--tile-color': '#22c55e' }}>
                         <p className="text-slate-400">Net options</p>
                         <p className="mt-3 text-2xl font-semibold text-white">{formatCurrency(metrics.netOptionValue)}</p>
                       </div>
-                      <div className="signal-strip rounded-3xl p-4 text-sm">
+                      <div className="lower-metric-tile signal-strip rounded-3xl p-4 text-sm" style={{ '--tile-color': '#f59e0b' }}>
                         <p className="text-slate-400">Max allowed</p>
                         <p className="mt-3 text-2xl font-semibold text-white">{formatPercent(settings.maxOptionsExposurePercent)}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="min-h-[260px] rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
+                  <div className="overview-lower-card overview-lower-card-violet min-h-[260px] rounded-[1.75rem] border border-slate-800/90 bg-slate-900/80 p-5 shadow-[0_16px_64px_-36px_rgba(15,23,42,0.75)] ring-1 ring-slate-800/60 backdrop-blur-xl">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Market shock</p>
-                        <h3 className="mt-2 text-lg font-semibold text-white">Risk outlook</h3>
+                        <p className="overview-panel-kicker text-xs uppercase tracking-[0.3em] text-slate-400">Market shock</p>
+                        <h3 className="overview-panel-title mt-2 text-lg font-semibold text-white">Risk outlook</h3>
                       </div>
-                      <div className="rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Guidance</div>
+                      <div className="overview-pill rounded-3xl bg-slate-950/70 px-3 py-1.5 text-[11px] text-slate-300 ring-1 ring-slate-800/40">Guidance</div>
                     </div>
                     <p className="text-sm leading-6 text-slate-400">This panel reflects current risk posture based on existing portfolio metrics. No additional scenario calculations are added.</p>
                     <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                      <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
+                      <div className="lower-metric-tile signal-strip rounded-3xl p-4 text-sm text-slate-300" style={{ '--tile-color': '#a78bfa' }}>
                         <div className="flex items-center justify-between gap-3">
                           <span>Top 5 concentration</span>
                           <strong>{formatPercent(metrics.top5ConcentrationPercent)}</strong>
                         </div>
                       </div>
-                      <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
+                      <div className="lower-metric-tile signal-strip rounded-3xl p-4 text-sm text-slate-300" style={{ '--tile-color': '#22c55e' }}>
                         <div className="flex items-center justify-between gap-3">
                           <span>Hedge allocation</span>
                           <strong>{formatPercent(metrics.hedgeAllocation)}</strong>
                         </div>
                       </div>
-                      <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
+                      <div className="lower-metric-tile signal-strip rounded-3xl p-4 text-sm text-slate-300" style={{ '--tile-color': '#f59e0b' }}>
                         <div className="flex items-center justify-between gap-3">
                           <span>{marketShock.length ? 'Trim candidates' : 'Stable posture'}</span>
                           <strong>{marketShock.length ? marketShock.length : 'None'}</strong>
