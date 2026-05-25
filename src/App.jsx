@@ -456,12 +456,12 @@ function App() {
   }, [positions, metrics.absoluteTotalMarketValue])
   const shortOptionCount = optionRows.filter((position) => position.quantity < 0).length
   const cashPercent = metrics.totalMarketValue ? (Math.abs(metrics.cashValue) / Math.abs(metrics.totalMarketValue)) * 100 : 0
-  const largestNonCashPosition =
-    metrics.sortedByValue.find((position) => position.assetType !== 'Cash' && position.ticker?.toUpperCase() !== 'CASH') ||
-    metrics.sortedByValue[0] ||
+  const largestGroupedPosition =
+    top10Overview.find((position) => position.ticker?.toUpperCase() !== 'CASH') ||
+    top10Overview[0] ||
     { ticker: 'N/A', portfolioWeightPercent: 0 }
-  const largestPositionLabel = largestNonCashPosition.ticker || 'N/A'
-  const largestPositionPercentDisplay = formatPercent(largestNonCashPosition.portfolioWeightPercent || 0)
+  const largestPositionLabel = largestGroupedPosition.ticker || 'N/A'
+  const largestPositionPercentDisplay = formatPercent(largestGroupedPosition.portfolioWeightPercent || 0)
   const lastImportLabel = importTimestamp ? new Date(importTimestamp).toLocaleString() : 'Never'
 
   const trimmedPositions = useMemo(() => {
@@ -623,6 +623,24 @@ function App() {
     .filter((p) => p.optionType === 'Short Put' && typeof p.strike === 'number' && typeof p.quantity === 'number')
     .reduce((sum, p) => sum + Math.abs(p.quantity) * (p.strike || 0) * 100, 0)
   const shortPutAssignmentExposurePercent = metrics.totalMarketValue ? (shortPutAssignmentExposure / metrics.totalMarketValue) * 100 : 0
+  const shortPutRows = useMemo(() => {
+    return optionRows
+      .filter((position) => position.optionType === 'Short Put')
+      .map((position) => {
+        const dte = calculateDte(position.expiration)
+        return {
+          ...position,
+          dte,
+          assignmentExposure: Math.abs(Number(position.quantity || 0)) * Number(position.strike || 0) * 100,
+        }
+      })
+      .sort((a, b) => {
+        const left = a.dte === null ? Number.MAX_SAFE_INTEGER : a.dte
+        const right = b.dte === null ? Number.MAX_SAFE_INTEGER : b.dte
+        if (left !== right) return left - right
+        return String(a.ticker || '').localeCompare(String(b.ticker || ''))
+      })
+  }, [optionRows])
 
   // Local action warnings for short put assignment exposure
   const localWarnings = []
@@ -1105,29 +1123,34 @@ function App() {
               </div>
 
               <div className="data-panel data-table-panel overflow-hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/80 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-slate-800/60 backdrop-blur-xl">
-                <table className="data-table w-full table-fixed divide-y divide-slate-800 text-[11px]">
+                <table className="data-table positions-table w-full table-fixed divide-y divide-slate-800 text-[12px]">
                   <colgroup>
                     <col className="w-[8%]" />
-                    <col className="w-[19%]" />
-                    <col className="w-[10%]" />
+                    <col className="w-[20%]" />
+                    <col className="w-[7%]" />
+                    <col className="w-[7%]" />
+                    <col className="w-[6%]" />
+                    <col className="w-[8%]" />
                     <col className="w-[9%]" />
-                    <col className="w-[8%]" />
-                    <col className="w-[8%]" />
                     <col className="w-[10%]" />
                     <col className="w-[10%]" />
-                    <col className="w-[10%]" />
-                    <col className="w-[8%]" />
+                    <col className="w-[15%]" />
                   </colgroup>
                   <thead className="bg-slate-950/70 text-slate-400">
                     <tr>
-                      {['Ticker', 'Description', 'Asset Type', 'Strategy Bucket', 'Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %'].map((label) => (
-                        <th key={label} className="px-2 py-3 align-middle text-left text-[10px] font-semibold uppercase leading-tight tracking-[0.1em] text-slate-400">
-                          <button type="button" onClick={() => handleSort(label.replace(/\s+/g, '').charAt(0).toLowerCase() + label.replace(/\s+/g, '').slice(1))} className="inline-flex min-h-7 items-center gap-2 leading-tight">
-                            {label}
-                            <span>{sortArrow(label.replace(/\s+/g, '').charAt(0).toLowerCase() + label.replace(/\s+/g, '').slice(1))}</span>
-                          </button>
-                        </th>
-                      ))}
+                      {['Ticker', 'Description', 'Asset Type', 'Strategy Bucket', 'Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %'].map((label) => {
+                        const sortKey = label.replace(/\s+/g, '').charAt(0).toLowerCase() + label.replace(/\s+/g, '').slice(1)
+                        const isNumericHeader = ['Quantity', 'Avg Cost', 'Current Price', 'Market Value', 'Unrealized P/L', 'Portfolio %'].includes(label)
+
+                        return (
+                          <th key={label} className={`px-2 py-3 align-middle text-[9px] font-semibold uppercase leading-none tracking-[0.08em] text-slate-400 ${isNumericHeader ? 'text-right' : 'text-left'}`}>
+                            <button type="button" onClick={() => handleSort(sortKey)} className={`inline-flex min-h-7 items-center gap-1 whitespace-nowrap leading-none ${isNumericHeader ? 'w-full justify-end' : 'justify-start'}`}>
+                              {label}
+                              <span>{sortArrow(sortKey)}</span>
+                            </button>
+                          </th>
+                        )
+                      })}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
@@ -1144,16 +1167,16 @@ function App() {
                               <span className="ticker-chip">{position.ticker}</span>
                             )}
                           </td>
-                          <td className="truncate px-2 py-3 text-slate-300">{position.description}</td>
+                          <td className="truncate px-2 py-3 text-[12px] font-semibold text-slate-200">{position.description}</td>
                           <td className="px-2 py-3">
-                            <select value={position.assetType} onChange={(e) => handlePositionChange(position.id, 'assetType', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-2 py-2 text-[11px] text-slate-100 outline-none ring-1 ring-slate-800/40">
+                            <select value={position.assetType} onChange={(e) => handlePositionChange(position.id, 'assetType', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-1.5 py-2 text-[10px] text-slate-100 outline-none ring-1 ring-slate-800/40">
                               {assetTypes.slice(1).map((value) => (
                                 <option key={value} value={value}>{value}</option>
                               ))}
                             </select>
                           </td>
                           <td className="px-2 py-3">
-                            <select value={position.strategyBucket} onChange={(e) => handlePositionChange(position.id, 'strategyBucket', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-2 py-2 text-[10px] text-slate-100 outline-none ring-1 ring-slate-800/40">
+                            <select value={position.strategyBucket} onChange={(e) => handlePositionChange(position.id, 'strategyBucket', e.target.value)} className="table-select w-full rounded-2xl border border-slate-800 bg-slate-950 px-1.5 py-2 text-[10px] text-slate-100 outline-none ring-1 ring-slate-800/40">
                               {strategyBuckets.slice(1).map((value) => (
                                 <option key={value} value={value}>{value}</option>
                               ))}
@@ -1356,6 +1379,76 @@ function App() {
                     )}
                   </tbody>
                 </table>
+              </div>
+
+              <div className="overview-lower-card overview-lower-card-amber rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div>
+                    <p className="overview-panel-kicker text-sm uppercase tracking-[0.3em] text-slate-400">Short exposure</p>
+                    <h2 className="overview-panel-title mt-2 text-2xl font-semibold text-white">Short put watch</h2>
+                    <p className="mt-2 max-w-2xl text-sm text-slate-400">Assignment exposure from open short put positions, sorted by nearest expiration.</p>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[560px]">
+                    <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4" style={{ '--tile-color': '#f59e0b' }}>
+                      <p className="text-xs uppercase tracking-[0.22em] text-slate-400">Assigned value</p>
+                      <p className="mt-2 text-xl font-black text-amber-200">{formatCurrency(shortPutAssignmentExposure)}</p>
+                    </div>
+                    <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4" style={{ '--tile-color': '#22d3ee' }}>
+                      <p className="text-xs uppercase tracking-[0.22em] text-slate-400">Cash after assigned</p>
+                      <p className={`mt-2 text-xl font-black ${metrics.cashValue - shortPutAssignmentExposure >= 0 ? 'text-cyan-200' : 'text-rose-300'}`}>{formatCurrency(metrics.cashValue - shortPutAssignmentExposure)}</p>
+                    </div>
+                    <div className="lower-metric-tile rounded-3xl bg-slate-950/80 p-4" style={{ '--tile-color': '#a78bfa' }}>
+                      <p className="text-xs uppercase tracking-[0.22em] text-slate-400">Open shorts</p>
+                      <p className="mt-2 text-xl font-black text-white">{shortPutRows.length}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="data-table-panel overflow-hidden rounded-[1.5rem] border border-slate-800/80 bg-slate-950/55">
+                  <table className="data-table w-full table-fixed divide-y divide-slate-800 text-sm">
+                    <colgroup>
+                      <col className="w-[10%]" />
+                      <col className="w-[23%]" />
+                      <col className="w-[8%]" />
+                      <col className="w-[9%]" />
+                      <col className="w-[12%]" />
+                      <col className="w-[8%]" />
+                      <col className="w-[14%]" />
+                      <col className="w-[16%]" />
+                    </colgroup>
+                    <thead className="bg-slate-950/80 text-slate-400">
+                      <tr>
+                        {['Ticker', 'Contract', 'QTY', 'Strike', 'Expiration', 'DTE', 'Assigned Value', 'Unrealized P/L'].map((label) => (
+                          <th key={label} className={`px-3 py-3 uppercase leading-tight tracking-[0.12em] text-slate-400 ${['QTY', 'Strike', 'DTE', 'Assigned Value', 'Unrealized P/L'].includes(label) ? 'text-right' : 'text-left'}`}>
+                            {label}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800">
+                      {shortPutRows.length ? shortPutRows.map((position) => (
+                        <tr key={position.id} className="data-row hover:bg-slate-900/80 transition-colors duration-150">
+                          <td className="px-3 py-3 text-slate-100"><span className="ticker-chip">{position.underlyingTicker || position.ticker}</span></td>
+                          <td className="truncate px-3 py-3 text-slate-300">{position.fullSymbol || position.description}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatQuantity(position.quantity)}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">{formatCurrency(position.strike)}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-slate-100">{position.expiration || 'N/A'}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right text-slate-100">
+                            <span className={`dte-badge ${getDteBadgeClass(position.dte)}`}>{position.dte === null ? 'N/A' : `${position.dte}d`}</span>
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-3 text-right font-semibold text-amber-200">{formatCurrency(position.assignmentExposure)}</td>
+                          <td className={`whitespace-nowrap px-3 py-3 text-right ${position.unrealizedPL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{formatCurrency(position.unrealizedPL)}</td>
+                        </tr>
+                      )) : (
+                        <tr>
+                          <td colSpan={8} className="px-4 py-12 text-center text-slate-400">
+                            No short put positions are open.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </section>
           )}
