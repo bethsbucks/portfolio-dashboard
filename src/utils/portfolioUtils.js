@@ -139,13 +139,17 @@ const inferColumn = (header) => {
   const normalized = String(header || '').trim().toLowerCase().replace(/\s+/g, '')
 
   if (['symbol', 'ticker'].includes(normalized)) return 'ticker'
+  if (['fullsymbol', 'optionsymbol', 'contractsymbol'].includes(normalized)) return 'fullSymbol'
+  if (['underlying', 'underlyingticker'].includes(normalized)) return 'underlyingTicker'
   if (['description', 'name'].includes(normalized)) return 'description'
   if (normalized.includes('qty') || normalized.includes('quantity') || normalized.includes('shares')) return 'quantity'
   if (['lastprice', 'currentprice', 'price', 'markprice'].includes(normalized)) return 'currentPrice'
-  if (['marketvalue', 'currentvalue', 'marketvalueusd'].includes(normalized)) return 'marketValue'
+  if (['marketvalue', 'currentvalue', 'marketvalueusd'].includes(normalized) || normalized.includes('marketvalue') || normalized.includes('mktval')) return 'marketValue'
   if (['averagecost', 'avgcost', 'cost/share', 'costpershare', 'avgprice'].includes(normalized)) return 'avgCost'
-  if (['costbasis', 'totalcost', 'totalcostbasis', 'investment'].includes(normalized)) return 'costBasis'
-  if (['gain/loss', 'unrealizedgain/loss', 'unrealizedp/l', 'unrealizedpl', 'unrealizedgain'].includes(normalized)) return 'unrealizedPL'
+  if (['costbasis', 'totalcost', 'totalcostbasis', 'investment'].includes(normalized) || normalized.includes('costbasis')) return 'costBasis'
+  if (normalized.includes('%ofaccount') || normalized.includes('%ofacct') || normalized.includes('portfolio%')) return 'portfolioWeightPercent'
+  if (normalized.includes('gain') && normalized.includes('loss') && normalized.includes('%')) return 'unrealizedPLPercent'
+  if (['gain/loss', 'unrealizedgain/loss', 'unrealizedp/l', 'unrealizedpl', 'unrealizedgain'].includes(normalized) || (normalized.includes('gain') && normalized.includes('loss'))) return 'unrealizedPL'
   if (['%gain/loss', 'gain/loss%', 'unrealized%', 'unrealizedpl%'].includes(normalized)) return 'unrealizedPLPercent'
   if (['expiration', 'expdate', 'exp'].includes(normalized)) return 'expiration'
   if (['strike'].includes(normalized)) return 'strike'
@@ -238,13 +242,15 @@ const normalizeRow = (row, index) => {
     direct[column] = normalizeString(row[key])
   })
 
+  const preservedFullSymbol = normalizeString(direct.fullSymbol || row.fullSymbol || row['Full Symbol'] || row.optionSymbol || '')
+  const preservedUnderlyingTicker = normalizeString(direct.underlyingTicker || row.underlyingTicker || row.Underlying || row.underlying || '')
   const initialTicker = normalizeString(direct.ticker || row.ticker || row.Symbol)
   const description = normalizeString(direct.description || row.description || row.Name || '')
   const rawType = normalizeString(row.Type || row.type || direct.optionType || '')
   const quantity = parseNumber(direct.quantity || row.Quantity || row.Qty)
-  const optionMeta = parseBrokerOptionSymbol(initialTicker, quantity)
-  const ticker = optionMeta.underlyingTicker || initialTicker
-  const fullSymbol = optionMeta.fullSymbol || ''
+  const optionMeta = parseBrokerOptionSymbol(preservedFullSymbol || initialTicker, quantity)
+  const ticker = optionMeta.underlyingTicker || preservedUnderlyingTicker || initialTicker
+  const fullSymbol = optionMeta.fullSymbol || preservedFullSymbol || ''
   const calculatedOptionType = optionMeta.optionType || normalizeOptionType(direct.optionType || rawType)
   const assetType = normalizeAssetType(direct.assetType || row.assetType || '', description, ticker, calculatedOptionType)
 
@@ -262,8 +268,9 @@ const normalizeRow = (row, index) => {
   const delta = parseNumber(row.Delta || row.delta)
   const theta = parseNumber(row.Theta || row.theta)
 
-  const computedMarketValue = marketValue || (quantity && currentPrice ? (assetType === 'Option' ? quantity * currentPrice * 100 : quantity * currentPrice) : 0)
-  const computedCostBasis = costBasis || (quantity && avgCost ? quantity * avgCost : 0)
+  const optionMultiplier = assetType === 'Option' ? 100 : 1
+  const computedMarketValue = marketValue || (quantity && currentPrice ? quantity * currentPrice * optionMultiplier : 0)
+  const computedCostBasis = costBasis || (quantity && avgCost ? quantity * avgCost * optionMultiplier : 0)
   let finalCurrentPrice = currentPrice
   let finalQuantity = quantity
   let finalMarketValue = computedMarketValue
@@ -299,7 +306,7 @@ const normalizeRow = (row, index) => {
     assetType,
     optionType: calculatedOptionType,
     fullSymbol,
-    underlyingTicker: optionMeta.underlyingTicker || '',
+    underlyingTicker: optionMeta.underlyingTicker || preservedUnderlyingTicker || '',
     strategyBucket,
     quantity: finalQuantity,
     avgCost,
@@ -374,7 +381,7 @@ export const formatNumber = (value) => {
 
 export const formatQuantity = (value) => {
   if (value === null || value === undefined || Number.isNaN(Number(value))) {
-    return '—'
+    return 'N/A'
   }
   const number = Number(value)
   if (Number.isInteger(number)) {
@@ -720,7 +727,13 @@ export const parseCsvWithDiagnostics = (file) => {
             ignoredSummaryRowsCount: 0,
             cashImported: false,
             optionRowsImported: 0,
+            shortOptionRowsImported: 0,
             equityRowsImported: 0,
+            positionsWithZeroQuantity: 0,
+            brokerReportedTotalMarketValue: null,
+            calculatedTotalMarketValue: null,
+            brokerReportedTotalGainLoss: null,
+            calculatedUnrealizedPL: null,
             formatName: /symbol/i.test(rawHeaders.join(' ')) && /description/i.test(rawHeaders.join(' ')) && /market value/i.test(rawHeaders.join(' ')) ? 'AAA positions CSV' : 'Unknown CSV',
           }
 
@@ -748,6 +761,14 @@ export const parseCsvWithDiagnostics = (file) => {
             const assetTypeValue = normalizeString(obj['Asset Type'] || obj.assetType || '')
             const isSummaryRow = /positions total|total$/i.test(symbolValue) || /positions total|total$/i.test(descriptionValue) || /summary/i.test(symbolValue) || /summary/i.test(descriptionValue)
             if (isSummaryRow) {
+              const reportedMarketValue = parseNumber(obj['Mkt Val (Market Value)'] || obj['Market Value'] || obj.marketValue)
+              const reportedGainLoss = parseNumber(obj['Gain $ (Gain/Loss $)'] || obj['Gain/Loss'] || obj['Unrealized Gain/Loss'] || obj.unrealizedPL)
+              if (reportedMarketValue !== null) {
+                diagnostics.brokerReportedTotalMarketValue = reportedMarketValue
+              }
+              if (reportedGainLoss !== null) {
+                diagnostics.brokerReportedTotalGainLoss = reportedGainLoss
+              }
               diagnostics.skippedCount++
               diagnostics.ignoredSummaryRowsCount++
               diagnostics.skippedRows.push({ rowIndex: headerRowIndex + 1 + r, reason: 'summary row', raw: obj })
@@ -776,16 +797,22 @@ export const parseCsvWithDiagnostics = (file) => {
               }
               if (normalized.assetType === 'Option') {
                 diagnostics.optionRowsImported += 1
+                if (normalized.quantity < 0) {
+                  diagnostics.shortOptionRowsImported += 1
+                }
               }
               if (normalized.assetType === 'Stock') {
                 diagnostics.equityRowsImported += 1
               }
+              if (normalized.quantity === 0) {
+                diagnostics.positionsWithZeroQuantity += 1
+              }
 
               if ((!normalized.marketValue || normalized.marketValue === 0) && normalized.quantity && normalized.currentPrice) {
-                normalized.marketValue = normalized.quantity * normalized.currentPrice
+                normalized.marketValue = normalized.quantity * normalized.currentPrice * (normalized.assetType === 'Option' ? 100 : 1)
               }
               if ((!normalized.costBasis || normalized.costBasis === 0) && normalized.quantity && normalized.avgCost) {
-                normalized.costBasis = normalized.quantity * normalized.avgCost
+                normalized.costBasis = normalized.quantity * normalized.avgCost * (normalized.assetType === 'Option' ? 100 : 1)
               }
 
               mappedRows.push(normalized)
@@ -798,6 +825,8 @@ export const parseCsvWithDiagnostics = (file) => {
           const normalizedPositions = normalizePositions(mappedRows)
           diagnostics.normalizedCount = normalizedPositions.length
           diagnostics.totalImportedPositions = normalizedPositions.length
+          diagnostics.calculatedTotalMarketValue = Number(normalizedPositions.reduce((sum, position) => sum + position.marketValue, 0).toFixed(2))
+          diagnostics.calculatedUnrealizedPL = Number(normalizedPositions.reduce((sum, position) => sum + position.unrealizedPL, 0).toFixed(2))
 
           resolve({ positions: normalizedPositions, diagnostics })
         } catch (err) {
