@@ -1618,7 +1618,7 @@ function App() {
           {activeTab === 'Settings' && (
             <section className="space-y-6">
               <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-                <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                   <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Risk thresholds</p>
                   <h2 className="mt-3 text-2xl font-semibold text-white">Configure limits</h2>
                   <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -1632,44 +1632,44 @@ function App() {
                       { key: 'maxLeveragedExposurePercent', label: 'Max leveraged ETF exposure %' },
                     ].map((item) => (
                       <label key={item.key} className="block">
-                        <span className="text-sm text-slate-400">{item.label}</span>
-                        <input type="number" step="0.1" value={settings[item.key]} onChange={(e) => setSettings((current) => ({ ...current, [item.key]: Number(e.target.value) }))} className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
+                        <span className="field-label text-sm text-slate-400">{item.label}</span>
+                        <input type="number" step="0.1" value={settings[item.key]} onChange={(e) => setSettings((current) => ({ ...current, [item.key]: Number(e.target.value) }))} className="control-shell mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-1 ring-white/5" />
                       </label>
                     ))}
                   </div>
                 </div>
 
-                <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                   <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Data tools</p>
                   <h2 className="mt-3 text-2xl font-semibold text-white">Import, export, reset</h2>
                   <div className="mt-6 space-y-4">
-                    <div className="rounded-3xl border border-slate-800/90 bg-slate-950/80 p-4">
+                    <div className="signal-strip rounded-3xl p-4">
                       <p className="text-sm text-slate-300">CSV portfolio import</p>
-                      <input type="file" accept=".csv" onChange={handleCsvUpload} className="mt-3 w-full text-sm text-slate-100" />
+                      <input type="file" accept=".csv" onChange={handleCsvUpload} className="file-input mt-3 w-full text-sm" />
                       {csvMessage && <p className="mt-3 text-sm text-slate-400">{csvMessage}</p>}
                     </div>
-                    <div className="rounded-3xl border border-slate-800/90 bg-slate-950/80 p-4">
+                    <div className="signal-strip rounded-3xl p-4">
                       <p className="text-sm text-slate-300">JSON backup export</p>
-                      <button type="button" onClick={handleExportBackup} className="mt-3 inline-flex items-center gap-2 rounded-3xl bg-slate-100/10 px-4 py-3 text-sm text-slate-100 ring-1 ring-white/10 transition hover:bg-slate-100/15">
+                      <button type="button" onClick={handleExportBackup} className="action-button mt-3 gap-2 px-4 py-3 text-sm">
                         <Download className="h-4 w-4" /> Export JSON backup
                       </button>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/90 bg-slate-950/80 p-4">
+                    <div className="signal-strip rounded-3xl p-4">
                       <p className="text-sm text-slate-300">JSON backup import</p>
-                      <input type="file" accept="application/json" onChange={handleJsonImport} className="mt-3 w-full text-sm text-slate-100" />
+                      <input type="file" accept="application/json" onChange={handleJsonImport} className="file-input mt-3 w-full text-sm" />
                       {jsonMessage && <p className="mt-3 text-sm text-slate-400">{jsonMessage}</p>}
                     </div>
-                    <div className="rounded-3xl border border-slate-800/90 bg-slate-950/80 p-4">
+                    <div className="signal-strip rounded-3xl p-4">
                       <p className="text-sm text-slate-300">Reset app data</p>
-                      <button type="button" onClick={handleResetAll} className="mt-3 inline-flex items-center gap-2 rounded-3xl bg-rose-500/10 px-4 py-3 text-sm text-rose-200 ring-1 ring-rose-400/10 transition hover:bg-rose-500/15">
+                      <button type="button" onClick={handleResetAll} className="action-button is-danger mt-3 gap-2 px-4 py-3 text-sm">
                         <RefreshCcw className="h-4 w-4" /> Reset all data
                       </button>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/90 bg-slate-950/80 p-4">
+                    <div className="signal-strip rounded-3xl p-4">
                       <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Testing / Demo Tools</p>
                       <h3 className="mt-2 text-sm font-semibold text-white">Sample portfolio loader</h3>
                       <p className="mt-2 text-sm text-slate-400">This replaces current portfolio data with demo data for testing.</p>
-                      <button type="button" onClick={loadSamplePortfolio} className="mt-4 inline-flex items-center gap-2 rounded-3xl bg-slate-100/10 px-4 py-3 text-sm text-slate-100 ring-1 ring-white/10 transition hover:bg-slate-100/15">
+                      <button type="button" onClick={loadSamplePortfolio} className="action-button mt-4 gap-2 px-4 py-3 text-sm">
                         <Plus className="h-4 w-4" /> Load demo/sample portfolio
                       </button>
                     </div>
@@ -1677,26 +1677,26 @@ function App() {
                 </div>
               </div>
 
-              <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+              <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Import summary</p>
                     <h3 className="mt-2 text-xl font-semibold text-white">Data status</h3>
                   </div>
-                  <div className="rounded-3xl bg-slate-950/70 px-4 py-3 text-sm text-slate-300 ring-1 ring-white/10">
+                  <div className="control-shell rounded-3xl bg-slate-950/70 px-4 py-3 text-sm text-slate-300 ring-1 ring-white/10">
                     Last import {lastImportLabel}
                   </div>
                 </div>
                 <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                  <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                  <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                     <p className="text-slate-400">Imported positions</p>
                     <p className="mt-3 text-2xl font-semibold text-white">{metrics.positionsCount}</p>
                   </div>
-                  <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                  <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                     <p className="text-slate-400">Total market value</p>
                     <p className="mt-3 text-2xl font-semibold text-white">{formatCurrency(metrics.totalMarketValue)}</p>
                   </div>
-                  <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                  <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                     <p className="text-slate-400">Risk threshold set</p>
                     <p className="mt-3 text-2xl font-semibold text-white">{Object.keys(settings).length}</p>
                   </div>
@@ -1704,86 +1704,86 @@ function App() {
               </div>
 
               {csvDiagnostics && (
-                <div className="rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
+                <div className="data-panel rounded-[2rem] border border-slate-800/90 bg-slate-900/80 p-6 shadow-[0_20px_80px_-40px_rgba(15,23,42,0.7)] ring-1 ring-white/5 backdrop-blur-xl">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Import diagnostics</p>
                       <h3 className="mt-2 text-xl font-semibold text-white">CSV parser results</h3>
                     </div>
-                    <button type="button" onClick={handleDownloadDiagnostics} className="inline-flex items-center gap-2 rounded-3xl bg-slate-100/10 px-4 py-3 text-sm text-slate-100 ring-1 ring-white/10 transition hover:bg-slate-100/15">
+                    <button type="button" onClick={handleDownloadDiagnostics} className="action-button gap-2 px-4 py-3 text-sm">
                       <Download className="h-4 w-4" /> Download diagnostics JSON
                     </button>
                   </div>
                   <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">File name</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.fileName || 'unknown'}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Format detected</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.formatName || 'Unknown'}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Header row index</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.headerRowIndex ?? 'N/A'}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Skipped rows</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.skippedCount ?? 0}</p>
                     </div>
                   </div>
                   <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Broker reported value</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.brokerReportedTotalMarketValue != null ? formatCurrency(csvDiagnostics.brokerReportedTotalMarketValue) : 'N/A'}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Calculated total value</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.calculatedTotalMarketValue != null ? formatCurrency(csvDiagnostics.calculatedTotalMarketValue) : 'N/A'}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Broker reported gain/loss</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.brokerReportedTotalGainLoss != null ? formatCurrency(csvDiagnostics.brokerReportedTotalGainLoss) : 'N/A'}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Calculated unrealized P/L</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.calculatedUnrealizedPL != null ? formatCurrency(csvDiagnostics.calculatedUnrealizedPL) : 'N/A'}</p>
                     </div>
                   </div>
                   <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Cash imported</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.cashImported ? 'Yes' : 'No'}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Option rows</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.optionRowsImported ?? 0}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Short option rows</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.shortOptionRowsImported ?? 0}</p>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Zero quantity rows</p>
                       <p className="mt-2 text-sm text-white">{csvDiagnostics.positionsWithZeroQuantity ?? 0}</p>
                     </div>
                   </div>
                   <div className="mt-6 grid gap-4 lg:grid-cols-2">
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Headers detected</p>
-                      <pre className="mt-2 max-h-28 overflow-auto whitespace-pre-wrap text-xs text-slate-200">{csvDiagnostics.detectedHeaders?.join(', ') || 'None'}</pre>
+                      <pre className="diagnostic-code mt-2 max-h-28 overflow-auto whitespace-pre-wrap text-xs text-slate-200">{csvDiagnostics.detectedHeaders?.join(', ') || 'None'}</pre>
                     </div>
-                    <div className="rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-slate-400">Auto mapped fields</p>
-                      <pre className="mt-2 max-h-28 overflow-auto whitespace-pre-wrap text-xs text-slate-200">{Object.keys(csvDiagnostics.autoMappedFields || {}).length ? JSON.stringify(csvDiagnostics.autoMappedFields, null, 2) : 'No fields mapped'}</pre>
+                      <pre className="diagnostic-code mt-2 max-h-28 overflow-auto whitespace-pre-wrap text-xs text-slate-200">{Object.keys(csvDiagnostics.autoMappedFields || {}).length ? JSON.stringify(csvDiagnostics.autoMappedFields, null, 2) : 'No fields mapped'}</pre>
                     </div>
                   </div>
                   {csvDiagnostics.skippedRows?.length > 0 && (
-                    <div className="mt-6 rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip mt-6 rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-sm text-slate-400">Skipped rows</p>
                       <ul className="mt-3 space-y-2 text-slate-200">
                         {csvDiagnostics.skippedRows.map((row, index) => (
-                          <li key={`skipped-${index}`} className="rounded-2xl bg-slate-950/90 px-3 py-2">
+                          <li key={`skipped-${index}`} className="diagnostic-code rounded-2xl px-3 py-2">
                             <div className="text-xs text-slate-400">{row.line ? `Line ${row.line}` : `Row ${index + 1}`}</div>
                             <div>{row.reason || JSON.stringify(row)}</div>
                           </li>
@@ -1792,9 +1792,9 @@ function App() {
                     </div>
                   )}
                   {csvDiagnostics.preview?.length > 0 && (
-                    <div className="mt-6 rounded-3xl border border-slate-800/80 bg-slate-950/80 p-4 text-sm text-slate-300">
+                    <div className="signal-strip mt-6 rounded-3xl p-4 text-sm text-slate-300">
                       <p className="text-sm text-slate-400">Preview rows</p>
-                      <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap text-xs text-slate-200">{JSON.stringify(csvDiagnostics.preview, null, 2)}</pre>
+                      <pre className="diagnostic-code mt-2 max-h-40 overflow-auto whitespace-pre-wrap text-xs text-slate-200">{JSON.stringify(csvDiagnostics.preview, null, 2)}</pre>
                     </div>
                   )}
                 </div>

@@ -269,6 +269,28 @@ select {
   box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.24), 0 0 18px rgba(34, 211, 238, 0.08);
 }
 
+.file-input {
+  color: #cbd5e1;
+}
+
+.file-input::file-selector-button {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.16), rgba(15, 23, 42, 0.94));
+  border: 1px solid rgba(103, 232, 249, 0.2);
+  border-radius: 999px;
+  color: #e5f3ff;
+  cursor: pointer;
+  font-weight: 800;
+  margin-right: 1rem;
+  padding: 0.65rem 1rem;
+}
+
+.diagnostic-code {
+  background: rgba(2, 6, 18, 0.74);
+  border: 1px solid rgba(103, 232, 249, 0.1);
+  border-radius: 1rem;
+  padding: 0.75rem;
+}
+
 .ticker-chip {
   color: #e5f3ff;
   display: inline-flex;
